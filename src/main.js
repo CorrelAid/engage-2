@@ -1,4 +1,5 @@
 import Vue from "vue";
+import dayjs from "./plugins/dayjs";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
@@ -8,6 +9,8 @@ import "roboto-fontface/css/roboto/roboto-fontface.css";
 import "@mdi/font/css/materialdesignicons.css";
 
 Vue.config.productionTip = false;
+
+Vue.prototype.dayjs = dayjs;
 
 new Vue({
   router,
