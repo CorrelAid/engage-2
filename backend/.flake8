@@ -1,0 +1,6 @@
+[flake8]
+ignore = D100,D104,D203,D401,W503
+exclude = .git,__pycache__,src/alembic
+max-complexity = 10
+max-line-length = 100
+docstring-convention = numpy
