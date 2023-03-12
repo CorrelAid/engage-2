@@ -121,6 +121,17 @@
   <v-navigation-drawer :rail="isRail" location="right" permanent>
     <v-list>
       <v-list-item :title="organization?.name" subtitle="Organization">
+        <template v-slot:prepend>
+          <v-avatar
+            :size="isRail ? 24 : undefined"
+            :rounded="isRail || 'lg'"
+            color="secondary"
+          >
+            <strong class="text-white">
+              {{ organization?.name.charAt(0).toUpperCase() }}
+            </strong>
+          </v-avatar>
+        </template>
       </v-list-item>
     </v-list>
     <v-divider></v-divider>

@@ -1,7 +1,17 @@
 <template>
   <v-navigation-drawer :rail="isRail" permanent>
     <v-list>
-      <v-list-item title="Frie Preu" subtitle="Administrator"> </v-list-item>
+      <v-list-item title="Frie Preu" subtitle="Administrator">
+        <template v-slot:prepend>
+          <v-avatar
+            :size="isRail ? 24 : undefined"
+            :rounded="isRail || 'lg'"
+            color="primary"
+          >
+            <strong class="text-white">FP</strong>
+          </v-avatar>
+        </template>
+      </v-list-item>
     </v-list>
     <v-divider></v-divider>
     <v-list density="compact" nav>
