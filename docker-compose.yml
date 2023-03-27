@@ -16,15 +16,14 @@ services:
       dockerfile: Dockerfile
     environment:
       - CSRF_SECRET=3b0c0af2b9f2e717ee9bf91a
+      - POSTGRES_USER=engage
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=engage
     ports:
       - 8000:8000
       - 5678:5678
       - 5679:5679
-    command: >
-          sh -c '
-          python -m debugpy --wait-for-client --listen 0.0.0.0:5678 -m
-          uvicorn app:app --reload --host 0.0.0.0 --port 8000
-          '
+    command: ["python", "main.py"]
     volumes:
       - ./backend/src:/app
 
