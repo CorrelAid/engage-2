@@ -6,12 +6,13 @@ from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin
 from fastapi_users.authentication import (
     AuthenticationBackend,
-    BearerTransport,
-    JWTStrategy,
+    CookieTransport
 )
+from fastapi_users.authentication.strategy.db import AccessTokenDatabase, DatabaseStrategy
 from fastapi_users.db import SQLAlchemyUserDatabase
 
-from app.db import User, get_user_db
+from app.db import User, get_user_db, AccessToken, get_access_token_db
+
 
 SECRET = os.getenv("CSRF_SECRET")
 
@@ -24,12 +25,12 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         print(f"User {user.id} has registered.")
 
     async def on_after_forgot_password(
-        self, user: User, token: str, request: Optional[Request] = None
+            self, user: User, token: str, request: Optional[Request] = None
     ):
         print(f"User {user.id} has forgot their password. Reset token: {token}")
 
     async def on_after_request_verify(
-        self, user: User, token: str, request: Optional[Request] = None
+            self, user: User, token: str, request: Optional[Request] = None
     ):
         print(f"Verification requested for user {user.id}. Verification token: {token}")
 
@@ -38,17 +39,18 @@ async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db
     yield UserManager(user_db)
 
 
-bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
 
+def get_database_strategy(
+        access_token_db: AccessTokenDatabase[AccessToken] = Depends(get_access_token_db),
+) -> DatabaseStrategy:
+    return DatabaseStrategy(access_token_db, lifetime_seconds=3600)
 
-def get_jwt_strategy() -> JWTStrategy:
-    return JWTStrategy(secret=SECRET, lifetime_seconds=3600)
+cookie_transport = CookieTransport()
 
-# TODO: change to transport "cookie" for frontend communication, get strategy either "jwt" or "database" (for token invalidation)
 auth_backend = AuthenticationBackend(
-    name="jwt",
-    transport=bearer_transport,
-    get_strategy=get_jwt_strategy,
+    name="token-db",
+    transport=cookie_transport,
+    get_strategy=get_database_strategy,
 )
 
 fastapi_users = FastAPIUsers[User, uuid.UUID](get_user_manager, [auth_backend])
