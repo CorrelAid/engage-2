@@ -9,11 +9,15 @@ services:
       - POSTGRES_DB=engage
     ports:
       - 5432:5432
+    networks:
+      - engage2
 
   api:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    depends_on:
+      - database
     environment:
       - CSRF_SECRET=3b0c0af2b9f2e717ee9bf91a
       - POSTGRES_USER=engage
@@ -24,7 +28,12 @@ services:
       - 5678:5678
       - 5679:5679
     command: ["python", "main.py"]
+    networks:
+      - engage2
+    links:
+      - "database:engagedb"
     volumes:
       - ./backend/src:/app
 
-  
+networks:
+  engage2:
