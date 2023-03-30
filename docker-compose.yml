@@ -30,8 +30,6 @@ services:
     command: ["python", "main.py"]
     networks:
       - engage2
-    links:
-      - "database:engagedb"
     volumes:
       - ./backend/src:/app
 
