@@ -28,8 +28,14 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { apiClient } from "@/plugins/api";
 
 const isPasswordVisible = ref(false);
 const email = ref("");
 const password = ref("");
+
+apiClient.auth.authTokenDbLoginAuthLoginPost({
+  username: email.value,
+  password: password.value,
+});
 </script>
