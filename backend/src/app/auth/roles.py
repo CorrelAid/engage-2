@@ -15,5 +15,5 @@ class RoleChecker:
 
     def __call__(self, user=Depends(current_active_user)):
         if not set(user.roles).isdisjoint(self.allowed_roles):
-            logger.debug(f"User {user.email}with roles {user.roles} not in {self.allowed_roles}")
+            logger.debug(f"User {user.email} with roles {user.roles} not in {self.allowed_roles}")
             raise HTTPException(status_code=403, detail="Operation not permitted")
