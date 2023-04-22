@@ -11,8 +11,8 @@ from fastapi_users.authentication import (
 )
 from fastapi_users.authentication.strategy.db import AccessTokenDatabase, DatabaseStrategy
 from fastapi_users.db import SQLAlchemyUserDatabase
-
-from app.database.connection import User, get_user_db, AccessToken, get_access_token_db
+from app.database.connection import get_user_db, get_access_token_db
+from app.database.models import User, AccessToken
 
 SECRET = os.getenv("CSRF_SECRET")
 logger = logging.getLogger("auth")
