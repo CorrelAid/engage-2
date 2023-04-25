@@ -1,36 +1,19 @@
 from fastapi import Depends, FastAPI
 
+from app.api.routers import user_management
+
 from app.database.connection import create_db_and_tables
 from app.database.models import User
-from app.api.schemas import UserCreate, UserRead, UserUpdate
-from app.auth.users import auth_backend, current_active_user, fastapi_users
+from app.auth.users import current_active_user
 
 app = FastAPI()
 
-app.include_router(
-    fastapi_users.get_auth_router(auth_backend), prefix="/auth", tags=["auth"]
-)
-app.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/auth",
-    tags=["auth"],
-)
-app.include_router(
-    fastapi_users.get_reset_password_router(),
-    prefix="/auth",
-    tags=["auth"],
-)
-app.include_router(
-    fastapi_users.get_verify_router(UserRead),
-    prefix="/auth",
-    tags=["auth"],
-)
-app.include_router(
-    fastapi_users.get_users_router(UserRead, UserUpdate),
-    prefix="/users",
-    tags=["users"],
-)
-
+# All necessary endpoints for user management
+app.include_router(user_management.auth_router, prefix="/auth", tags=["auth"])
+app.include_router(user_management.register_router, prefix="/auth", tags=["auth"])
+app.include_router(user_management.reset_password_router, prefix="/auth", tags=["auth"])
+app.include_router(user_management.verify_router, prefix="/auth", tags=["auth"])
+app.include_router(user_management.get_users_router, prefix="/users", tags=["users"])
 
 @app.get("/authenticated-route")
 async def authenticated_route(user: User = Depends(current_active_user)):
