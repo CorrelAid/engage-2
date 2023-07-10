@@ -1,22 +1,8 @@
 import uuid
-from typing import List, AnyStr, Optional, Dict
+from typing import Dict, List, Optional
 
 from fastapi_users import schemas
 from pydantic import BaseModel
-
-
-# class CorrelAidUser(BaseModel):
-#     """
-#     Base class extension for the user model with additional fields.
-#     """
-#     roles: List[str] = ["member"]
-#     local_chapter: Optional[str]
-#     first_name: str
-#     surname: str
-#     gender: Optional[str]
-#
-#     class Config:
-#         orm_mode = True
 
 
 class UserRead(schemas.BaseUser[uuid.UUID]):
@@ -42,10 +28,12 @@ class UserUpdate(schemas.BaseUserUpdate):
     surname: str
     gender: Optional[str]
 
+
 class Contact(BaseModel):
     """
     Base class for specifying organizational contacts.
     """
+
     first_name: str
     surname: str
     email: str
@@ -59,6 +47,7 @@ class PartnerOrganization(BaseModel):
     """
     Class for the partner organizations collaborating with CorrelAid.
     """
+
     id: uuid.UUID
     name: str
     general_contact: Contact
