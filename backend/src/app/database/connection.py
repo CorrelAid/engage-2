@@ -1,22 +1,14 @@
-import os
 from typing import AsyncGenerator
 
 from app.database.models import AccessToken, Base, User
 from fastapi import Depends
 from fastapi_users.db import SQLAlchemyUserDatabase
 from fastapi_users_db_sqlalchemy.access_token import SQLAlchemyAccessTokenDatabase
+from settings import settings
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-DATABASE_URL = (
-    f"postgresql+asyncpg://"
-    f"{os.getenv('POSTGRES_USER')}:"
-    f"{os.getenv('POSTGRES_PASSWORD')}@database:5432/"
-    f"{os.getenv('POSTGRES_DB')}"
-)
-
-
-engine = create_async_engine(DATABASE_URL)
-async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
+engine = create_async_engine(url=settings.database_url)
+async_session_maker = async_sessionmaker(bind=engine, expire_on_commit=False)
 
 
 async def create_db_and_tables():
