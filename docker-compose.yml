@@ -20,9 +20,10 @@ services:
       - database
     environment:
       - CSRF_SECRET=3b0c0af2b9f2e717ee9bf91a
-      - POSTGRES_USER=engage
-      - POSTGRES_PASSWORD=pass
-      - POSTGRES_DB=engage
+      - DATABASE_HOST=database
+      - DATABASE_USER=engage
+      - DATABASE_PASSWORD=pass
+      - DATABASE_NAME=engage
     ports:
       - 8000:8000
       - 5678:5678
