@@ -1,14 +1,14 @@
 <template>
   <v-navigation-drawer :rail="isRail" permanent>
     <v-list>
-      <v-list-item title="Frie Preu" subtitle="Administrator">
+      <v-list-item :title="adminUser.name" subtitle="Administrator">
         <template v-slot:prepend>
           <v-avatar
             :size="isRail ? 24 : undefined"
             :rounded="isRail || 'lg'"
             color="primary"
           >
-            <strong class="text-white">FP</strong>
+            <strong class="text-white">{{ adminUser.initials }}</strong>
           </v-avatar>
         </template>
       </v-list-item>
@@ -55,6 +55,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { adminUser } from "@/mockData";
 
 const isRail = ref(true);
 </script>
