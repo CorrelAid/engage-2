@@ -1,5 +1,6 @@
 // Composables
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthentication } from "@/composables/useAuthentication";
 
 const routes = [
   {
@@ -35,6 +36,16 @@ const router = createRouter({
       };
     }
   },
+});
+
+router.beforeEach((to, from, next) => {
+  const authentication = useAuthentication();
+
+  if (!authentication.isAuthenticated() && to.name !== "Login") {
+    return next({ name: "Login" });
+  }
+
+  return next();
 });
 
 export default router;
