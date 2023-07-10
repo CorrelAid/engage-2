@@ -3,8 +3,17 @@ from app.auth.users import current_active_user
 from app.database.connection import create_db_and_tables
 from app.database.models import User
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # All necessary endpoints for user management
 app.include_router(user_management.auth_router, prefix="/auth", tags=["auth"])
