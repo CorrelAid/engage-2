@@ -1,44 +1,46 @@
-# default
+# Engage Frontend
 
-## Project setup
+This is the frontend for the CorrelAid Engage project. It is a Vue.js app using Vite as a bundler. It uses vue-router for routing and vuetify for the UI components.
 
-```
-# yarn
-yarn
+## Dev env setup
 
-# npm
-npm install
+To setup the dev environment you need to have node.js and a package manager
+installed. For the following instructions we assume that you have npm installed.
 
-# pnpm
-pnpm install
-```
+1. Go to the frontend folder
 
-### Compiles and hot-reloads for development
+1. Install dependencies
 
-```
-# yarn
-yarn dev
+        npm install
 
-# npm
-npm run dev
+1. Install pre-commit hooks via the backend folder. See the backend README for
+   details.
 
-# pnpm
-pnpm dev
-```
+## Local deployment
 
-### Compiles and minifies for production
+To run the frontend locally you can use the following command:
 
-```
-# yarn
-yarn build
+    npm run dev
 
-# npm
-npm run build
+This will start a local server on port 3000. You can then access the frontend
+at http://localhost:3000.
 
-# pnpm
-pnpm build
-```
+### Backend
 
-### Customize configuration
+The frontend expects the backend to be available at http://localhost:8000. To
+start the backend locally see the backend README for details. Alternatively you
+can use the docker-compose setup to start the backend. For this you need to
 
-See [Configuration Reference](https://vitejs.dev/config/).
+1. Go to the root folder of the project
+
+1. Start the backend
+
+        docker-compose up
+
+## Selected npm scripts
+
+This section only aims to provide a short overview of the most important
+npm scripts. For a full list of commands see the `package.json`.
+
+- `npm run dev`: Starts the development server
+- `npm run generate-client`: TBD
