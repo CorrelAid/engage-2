@@ -1,17 +1,39 @@
-from pydantic import BaseSettings, Field, SecretStr
+from pydantic import BaseModel, Field, SecretStr
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class ApiConfiguration(BaseModel):
+    cors_origins: list[str] = Field(default=["*"])
+    csrf_secret: SecretStr = Field(default=...)
+
+
+class DatabaseCredentials(BaseModel):
+    host: str = Field(default=...)
+    port: int = Field(default=5432)
+    name: str = Field(default=...)
+    user: str = Field(default=...)
+    password: SecretStr = Field(default=...)
+
+    @property
+    def dsn(self) -> str:
+        return (
+            f"postgresql+asyncpg://"
+            f"{self.user}:{self.password.get_secret_value()}"
+            f"@{self.host}:{self.port}"
+            f"/{self.name}"
+        )
 
 
 class Settings(BaseSettings):
-    # database credentials
-    DATABASE_HOST: str = Field(default=...)
-    DATABASE_PORT: int = Field(default=5432)
-    DATABASE_NAME: str = Field(default=...)
-    DATABASE_USER: str = Field(default=...)
-    DATABASE_PASSWORD: SecretStr = Field(default=...)
+    model_config = SettingsConfigDict(
+        env_prefix="ENGAGE_BACKEND_",
+        case_sensitive=False,
+        env_file=".env",
+        env_nested_delimiter="__",
+    )
 
-    @property
-    def database_url(self) -> str:
-        return f"postgresql+asyncpg://{self.DATABASE_USER}:{self.DATABASE_PASSWORD.get_secret_value()}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"  # noqa: E501
+    api: ApiConfiguration
+    database: DatabaseCredentials
 
 
 settings = Settings()

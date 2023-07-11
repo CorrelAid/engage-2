@@ -7,7 +7,7 @@ from fastapi_users_db_sqlalchemy.access_token import SQLAlchemyAccessTokenDataba
 from settings import settings
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-engine = create_async_engine(url=settings.database_url)
+engine = create_async_engine(url=settings.database.dsn)
 async_session_maker = async_sessionmaker(bind=engine, expire_on_commit=False)
 
 

@@ -37,7 +37,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = settings.database_url
+    url = settings.database.dsn
 
     context.configure(
         url=url,
@@ -69,7 +69,7 @@ async def run_migrations_online() -> None:
     configuration = config.get_section(config.config_ini_section) or {
         "script_location": "alembic"
     }
-    configuration["sqlalchemy.url"] = f"{settings.database_url}?async_fallback=true"
+    configuration["sqlalchemy.url"] = f"{settings.database.dsn}?async_fallback=true"
     connectable = async_engine_from_config(
         configuration,
         prefix="sqlalchemy.",
