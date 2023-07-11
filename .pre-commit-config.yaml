@@ -42,6 +42,12 @@ repos:
           - "fastapi"
         entry: "mypy --config-file backend/pyproject.toml"
         exclude: ^backend/src/database/migrations/
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: "v3.0.0"
+    hooks:
+      - id: prettier
+        exclude: "^(backend|frontend/node_modules)"
+        args: ["-w"]
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: "v8.16.0"
     hooks:
@@ -51,8 +57,11 @@ repos:
         additional_dependencies:
           - "eslint-plugin-simple-import-sort@8.0.0"
           - "eslint@8.22.0"
+          - "eslint-plugin-prettier@5.0.0"
           - "eslint-plugin-vue@9.3.0"
+          - "eslint-config-prettier@8.3.0"
           - "@vue/eslint-config-typescript@11.0.0"
+        exclude: "^(backend|frontend/node_modules)"
         args:
           - "--fix"
           - "--ignore-path frontend/.eslintignore"
