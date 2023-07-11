@@ -1,8 +1,7 @@
 export const adminUser = {
   name: "Frie Preu",
   initials: "FP",
-}
-
+};
 
 export const legalForms = [
   "e.V. - Eingetragener Verein",
@@ -57,44 +56,43 @@ export const relationshipContacts = [
   },
 ];
 
-type Contact= "Organization Contact" | "Project Contact";
+type Contact = "Organization Contact" | "Project Contact";
 
 const orgContact: Contact = "Organization Contact";
-const projContact: Contact  = "Project Contact";
-
+const projContact: Contact = "Project Contact";
 
 export const sampleOrganization = {
-    id: "2345a5a1-5e4a-445e-b3e8-9179c978476a",
-    name: "Deutscher Caritasverband e.V.",
-    legal_form: "e.V. - Eingetragener Verein",
-    sector: "Community development and advocacy groups",
-    relationship_team: {
-      id: "460b02df-64aa-4fc5-b773-f936b83266bd",
-      name: "CorrelAid Germany",
+  id: "2345a5a1-5e4a-445e-b3e8-9179c978476a",
+  name: "Deutscher Caritasverband e.V.",
+  legal_form: "e.V. - Eingetragener Verein",
+  sector: "Community development and advocacy groups",
+  relationship_team: {
+    id: "460b02df-64aa-4fc5-b773-f936b83266bd",
+    name: "CorrelAid Germany",
+  },
+  relationship_contact: {
+    id: "0618cfa8-d1ca-4af7-a189-da3bf1ba169e",
+    name: "Frie",
+  },
+  contacts: [
+    {
+      name: "Susie Harper",
+      email: "ruw@tujep.tg",
+      phone: "+49 176 2032 0211",
+      type: orgContact,
     },
-    relationship_contact: {
-      id: "0618cfa8-d1ca-4af7-a189-da3bf1ba169e",
-      name: "Frie",
+    {
+      name: "Johnny Briggs",
+      email: "ekofut@papgula.pa",
+      phone: "+49 176 2032 1111",
+      type: projContact,
     },
-    contacts: [
-      {
-        name: "Susie Harper",
-        email: "ruw@tujep.tg",
-        phone: "+49 176 2032 0211",
-        type: orgContact,
-      },
-      {
-        name: "Johnny Briggs",
-        email: "ekofut@papgula.pa",
-        phone: "+49 176 2032 1111",
-        type: projContact,
-      },
-    ],
-    notes:
-      "Die Caritas ist mehr als eine Organisation. Sie ist eine Grundhaltung gegenüber Menschen, besonders gegenüber Menschen in Not. Wie er sieht die Caritas ihre Aufgabe darin, den Menschen ohne Ansehen von Herkunft, Status oder Religion mit Liebe und Achtung zu begegnen.",
-  };
+  ],
+  notes:
+    "Die Caritas ist mehr als eine Organisation. Sie ist eine Grundhaltung gegenüber Menschen, besonders gegenüber Menschen in Not. Wie er sieht die Caritas ihre Aufgabe darin, den Menschen ohne Ansehen von Herkunft, Status oder Religion mit Liebe und Achtung zu begegnen.",
+};
 
-export const sampleOrganizationsArray= [
+export const sampleOrganizationsArray = [
   {
     id: "2345a5a1-5e4a-445e-b3e8-9179c978476a",
     name: "Deutscher Caritasverband e.V.",
