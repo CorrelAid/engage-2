@@ -34,19 +34,20 @@ class Contact(BaseModel):
     Base class for specifying organizational contacts.
     """
 
+    model_config = {"from_attributes": True}
+
     first_name: str
     surname: str
     email: str
     phone: Optional[str]
-
-    class Config:
-        orm_mode = True
 
 
 class PartnerOrganization(BaseModel):
     """
     Class for the partner organizations collaborating with CorrelAid.
     """
+
+    model_config = {"from_attributes": True}
 
     id: uuid.UUID
     name: str
@@ -57,6 +58,3 @@ class PartnerOrganization(BaseModel):
     local_chapter: Optional[str]
     digital_maturity: Optional[str]
     data_culture: Optional[str]
-
-    class Config:
-        orm_mode = True
