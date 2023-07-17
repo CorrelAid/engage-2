@@ -6,3 +6,5 @@ alembic-upgrade:
 	docker compose exec api sh -c "python -m alembic upgrade head"
 alembic-downgrade:
 	docker compose exec api sh -c "python -m alembic downgrade -1"
+adduser:
+	docker compose exec api sh -c "python -m cli.py adduser \"$(params)\""
