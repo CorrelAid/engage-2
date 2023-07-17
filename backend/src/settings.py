@@ -5,6 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class ApiConfiguration(BaseModel):
     cors_origins: list[str] = Field(default=["*"])
     csrf_secret: SecretStr = Field(default=...)
+    cookie_secure: bool = Field(default=True)
 
 
 class DatabaseCredentials(BaseModel):

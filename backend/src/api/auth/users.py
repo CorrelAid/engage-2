@@ -47,7 +47,9 @@ def get_database_strategy(
     return DatabaseStrategy(access_token_db, lifetime_seconds=3600)
 
 
-cookie_transport = CookieTransport()
+cookie_transport = CookieTransport(
+    cookie_secure=settings.api.cookie_secure,
+)
 
 auth_backend = AuthenticationBackend(
     name="token-db",
