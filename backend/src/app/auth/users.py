@@ -1,5 +1,4 @@
 import logging
-import os
 import uuid
 from typing import Optional
 
@@ -13,14 +12,14 @@ from fastapi_users.authentication.strategy.db import (
     DatabaseStrategy,
 )
 from fastapi_users.db import SQLAlchemyUserDatabase
+from settings import settings
 
-SECRET = os.getenv("CSRF_SECRET")
 logger = logging.getLogger("auth")
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
-    reset_password_token_secret = SECRET
-    verification_token_secret = SECRET
+    reset_password_token_secret = settings.api.csrf_secret
+    verification_token_secret = settings.api.csrf_secret
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
         logger.info(f"User {user.id} has registered.")

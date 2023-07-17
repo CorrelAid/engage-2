@@ -18,11 +18,8 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - database
-    environment:
-      - CSRF_SECRET=3b0c0af2b9f2e717ee9bf91a
-      - POSTGRES_USER=engage
-      - POSTGRES_PASSWORD=pass
-      - POSTGRES_DB=engage
+    env_file:
+      - .env
     ports:
       - 8000:8000
       - 5678:5678

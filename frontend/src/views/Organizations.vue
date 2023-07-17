@@ -48,6 +48,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { sampleOrganizationsArray } from '@/mockData';
 
 interface Organization {
   id: string;
@@ -58,20 +59,7 @@ const breadcrumbs = [
   { title: "Organizations", to: { name: "Organizations" }, disabled: true },
 ];
 
-const organizations = ref<Organization[]>([
-  {
-    id: "2345a5a1-5e4a-445e-b3e8-9179c978476a",
-    name: "Deutscher Caritasverband e.V.",
-  },
-  {
-    id: "a9e1db78-5958-41c3-b323-2870f2b75db1",
-    name: "Social Entrepreneurship Netzwerk Deutschland e.V.",
-  },
-  {
-    id: "3f6a4c64-a63b-46ac-86c8-f11ce3e9c2eb",
-    name: "Deutscher Pfadfinderbund e.V.",
-  },
-]);
+const organizations = ref<Organization[]>(sampleOrganizationsArray)
 
 const search = ref<string>();
 
