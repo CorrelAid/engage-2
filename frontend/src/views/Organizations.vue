@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { sampleOrganizationsArray } from '@/mockData';
+import { sampleOrganizationsArray } from "@/mockData";
 
 interface Organization {
   id: string;
@@ -59,7 +59,7 @@ const breadcrumbs = [
   { title: "Organizations", to: { name: "Organizations" }, disabled: true },
 ];
 
-const organizations = ref<Organization[]>(sampleOrganizationsArray)
+const organizations = ref<Organization[]>(sampleOrganizationsArray);
 
 const search = ref<string>();
 
@@ -67,7 +67,7 @@ const filteredOrganizations = computed<Organization[]>(() =>
   organizations.value.filter(
     (organization) =>
       !search.value ||
-      organization.name.toLowerCase().includes(search.value?.toLowerCase())
-  )
+      organization.name.toLowerCase().includes(search.value?.toLowerCase()),
+  ),
 );
 </script>

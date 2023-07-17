@@ -177,7 +177,13 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
-import {relationshipContacts, relationshipTeams, legalForms, sectors, sampleOrganization } from '@/mockData'
+import {
+  relationshipContacts,
+  relationshipTeams,
+  legalForms,
+  sectors,
+  sampleOrganization,
+} from "@/mockData";
 
 const route = useRoute();
 

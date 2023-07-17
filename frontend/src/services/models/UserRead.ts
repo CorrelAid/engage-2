@@ -6,9 +6,9 @@
  * Base User model.
  */
 export type UserRead = {
-    id?: any;
-    email: string;
-    is_active?: boolean;
-    is_superuser?: boolean;
-    is_verified?: boolean;
+  id?: any;
+  email: string;
+  is_active?: boolean;
+  is_superuser?: boolean;
+  is_verified?: boolean;
 };
