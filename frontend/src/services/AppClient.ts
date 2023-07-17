@@ -7,7 +7,6 @@ import { AxiosHttpRequest } from './core/AxiosHttpRequest';
 
 import { AuthService } from './services/AuthService';
 import { DefaultService } from './services/DefaultService';
-import { UsersService } from './services/UsersService';
 
 type HttpRequestConstructor = new (config: OpenAPIConfig) => BaseHttpRequest;
 
@@ -15,7 +14,6 @@ export class AppClient {
 
     public readonly auth: AuthService;
     public readonly default: DefaultService;
-    public readonly users: UsersService;
 
     public readonly request: BaseHttpRequest;
 
@@ -34,6 +32,5 @@ export class AppClient {
 
         this.auth = new AuthService(this.request);
         this.default = new DefaultService(this.request);
-        this.users = new UsersService(this.request);
     }
 }
