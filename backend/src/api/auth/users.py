@@ -2,8 +2,7 @@ import logging
 import uuid
 from typing import Optional
 
-from app.database.connection import get_access_token_db, get_user_db
-from app.database.models import AccessToken, User
+from database.session import get_access_token_db, get_user_db
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin
 from fastapi_users.authentication import AuthenticationBackend, CookieTransport
@@ -12,6 +11,7 @@ from fastapi_users.authentication.strategy.db import (
     DatabaseStrategy,
 )
 from fastapi_users.db import SQLAlchemyUserDatabase
+from models.user import AccessToken, User
 from settings import settings
 
 logger = logging.getLogger("auth")

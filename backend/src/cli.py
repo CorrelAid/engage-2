@@ -4,9 +4,9 @@ import contextlib
 import logging
 import sys
 
-from app.api.schemas import UserCreate
-from app.auth.users import get_user_manager
-from app.database.connection import get_async_session, get_user_db
+from api.auth.users import get_user_manager
+from api.routers.auth import UserCreate
+from database.session import get_async_session, get_user_db
 from fastapi_users.exceptions import UserAlreadyExists
 
 parser = argparse.ArgumentParser()
@@ -25,6 +25,7 @@ subparsers = parser.add_subparsers(title="CLI")
 
 
 async def adduser(
+    name: str,
     email: str,
     password: str,
     is_superuser: bool,
@@ -35,7 +36,10 @@ async def adduser(
                 async with get_user_manager_context(user_db) as user_manager:
                     user = await user_manager.create(
                         UserCreate(
-                            email=email, password=password, is_superuser=is_superuser
+                            name=name,
+                            email=email,
+                            password=password,
+                            is_superuser=is_superuser,
                         )
                     )
                     logging.info(f"User created {user}")
@@ -44,6 +48,7 @@ async def adduser(
 
 
 add_user_parser = subparsers.add_parser("adduser")
+add_user_parser.add_argument("-n", "--name", dest="name", default="Jane Doe")
 add_user_parser.add_argument(
     "-e", "--email", dest="email", default="testuser@example.com"
 )
@@ -60,6 +65,7 @@ if __name__ == "__main__":
         if asyncio.iscoroutinefunction(args.func):
             asyncio.run(
                 args.func(
+                    args.name,
                     args.email,
                     args.password,
                     args.is_superuser,
