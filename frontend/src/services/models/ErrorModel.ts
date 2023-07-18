@@ -3,5 +3,5 @@
 /* eslint-disable */
 
 export type ErrorModel = {
-    detail: (string | Record<string, string>);
+  detail: string | Record<string, string>;
 };
