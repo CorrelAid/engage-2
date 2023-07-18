@@ -18,5 +18,5 @@ app.include_router(router=auth.router)
 
 
 @app.get("/authenticated-route")
-async def authenticated_route(user: User = Depends(current_active_user)):
+async def authenticated_route(user: Annotated[User,Depends(current_active_user)]):
     return {"message": f"Hello {user.email}!"}
