@@ -5,12 +5,13 @@ from api.routers import auth
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models.user import User
+from settings import settings
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.api.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
