@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from api.auth.users import current_active_user
 from api.routers import auth
 from fastapi import Depends, FastAPI
@@ -18,5 +20,5 @@ app.include_router(router=auth.router)
 
 
 @app.get("/authenticated-route")
-async def authenticated_route(user: Annotated[User,Depends(current_active_user)]):
+async def authenticated_route(user: Annotated[User, Depends(current_active_user)]):
     return {"message": f"Hello {user.email}!"}
