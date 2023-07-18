@@ -14,7 +14,11 @@ export const useAuthStore = defineStore("app", () => {
       username: email,
       password: password,
     });
-    await fetchUser();
+    user.value = await fetchUser();
+  };
+
+  const refresh = async (): Promise<void> => {
+    user.value = await fetchUser();
   };
 
   const logout = async (): Promise<void> => {
@@ -22,12 +26,12 @@ export const useAuthStore = defineStore("app", () => {
     user.value = null;
   };
 
-  const fetchUser = async (): Promise<void> => {
+  const fetchUser = async (): Promise<UserRead | null> => {
     try {
       const response = await apiClient.auth.usersCurrentUserAuthMeGet();
-      user.value = response;
+      return response;
     } catch (error) {
-      user.value = null;
+      return null;
     }
   };
 
@@ -36,6 +40,6 @@ export const useAuthStore = defineStore("app", () => {
     isAuthenticated,
     login,
     logout,
-    getMe: fetchUser,
+    refresh,
   };
 });

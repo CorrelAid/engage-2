@@ -51,7 +51,7 @@ router.beforeEach(async (to, from, next) => {
   }
   const authStore = useAuthStore();
 
-  await authStore.getMe();
+  await authStore.refresh();
   if (!authStore.isAuthenticated) {
     return next({ name: "Login" });
   }
