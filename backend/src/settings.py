@@ -3,8 +3,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class ApiConfiguration(BaseModel):
+    csrf_secret: SecretStr = Field(default=..., min_length=32)
+    auth_reset_password_token_secret: SecretStr = Field(default=..., min_length=32)
+    auth_verification_token_secret: SecretStr = Field(default=..., min_length=32)
     cors_origins: list[str] = Field(default=["*"])
-    csrf_secret: SecretStr = Field(default=...)
     cookie_secure: bool = Field(default=True)
 
 
