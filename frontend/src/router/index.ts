@@ -1,6 +1,5 @@
-// Composables
 import { createRouter, createWebHistory } from "vue-router";
-import { useAuthentication } from "@/composables/useAuthentication";
+import { useAuthStore } from "@/store/auth";
 
 const routes = [
   {
@@ -50,10 +49,10 @@ router.beforeEach(async (to, from, next) => {
   if (!to.meta.requiresAuth) {
     return next();
   }
-  const authentication = useAuthentication();
+  const authStore = useAuthStore();
 
-  await authentication.getMe();
-  if (!authentication.isAuthenticated()) {
+  await authStore.getMe();
+  if (!authStore.isAuthenticated) {
     return next({ name: "Login" });
   }
 
