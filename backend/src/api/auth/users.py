@@ -2,7 +2,7 @@ import logging
 import uuid
 from typing import Optional
 
-from database.session import get_access_token_db, get_user_db
+from database.session import get_access_token_service, get_user_service
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin
 from fastapi_users.authentication import AuthenticationBackend, CookieTransport
@@ -37,12 +37,14 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         )
 
 
-async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db)):
+async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_service)):
     yield UserManager(user_db)
 
 
 def get_database_strategy(
-    access_token_db: AccessTokenDatabase[AccessToken] = Depends(get_access_token_db),
+    access_token_db: AccessTokenDatabase[AccessToken] = Depends(
+        get_access_token_service
+    ),
 ) -> DatabaseStrategy:
     return DatabaseStrategy(access_token_db, lifetime_seconds=3600)
 
