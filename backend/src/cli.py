@@ -24,27 +24,22 @@ parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers(title="CLI")
 
 
-async def adduser(
-    name: str,
-    email: str,
-    password: str,
-    is_superuser: bool,
-):
+async def adduser(args: argparse.Namespace):
     try:
         async with get_async_session_context() as session:
             async with get_user_db_context(session) as user_db:
                 async with get_user_manager_context(user_db) as user_manager:
                     user = await user_manager.create(
                         UserCreate(
-                            name=name,
-                            email=email,
-                            password=password,
-                            is_superuser=is_superuser,
+                            name=args.name,
+                            email=args.email,
+                            password=args.password,
+                            is_superuser=args.is_superuser,
                         )
                     )
                     logging.info(f"User created {user}")
     except UserAlreadyExists:
-        logging.error(f"User {email} already exists")
+        logging.error(f"User {args.email} already exists")
 
 
 add_user_parser = subparsers.add_parser("adduser")
@@ -55,21 +50,12 @@ add_user_parser.add_argument(
 add_user_parser.add_argument(
     "-p", "--password", dest="password", default="testpassword123"
 )
-add_user_parser.add_argument("-s", "--superuser", dest="is_superuser", default=False)
+add_user_parser.add_argument(
+    "-s", "--superuser", dest="is_superuser", action="store_true"
+)
 add_user_parser.set_defaults(func=adduser)
 
 
 if __name__ == "__main__":
     args = parser.parse_args(sys.argv[1:])
-    if args.func:
-        if asyncio.iscoroutinefunction(args.func):
-            asyncio.run(
-                args.func(
-                    args.name,
-                    args.email,
-                    args.password,
-                    args.is_superuser,
-                )
-            )
-        else:
-            args.func(args)
+    asyncio.run(args.func(args))
