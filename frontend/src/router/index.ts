@@ -14,14 +14,22 @@ const routes = [
     component: () => import("@/views/Login.vue"),
   },
   {
+    name: "Dashboard",
+    path: "/dashboard",
+    component: () => import("@/views/Dashboard.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
     name: "Organizations",
     path: "/organizations",
     component: () => import("@/views/Organizations.vue"),
+    meta: { requiresAuth: true },
   },
   {
     name: "Organization",
     path: "/organizations/:organizationId",
     component: () => import("@/views/Organization.vue"),
+    meta: { requiresAuth: true },
   },
 ];
 
@@ -38,10 +46,14 @@ const router = createRouter({
   },
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  if (!to.meta.requiresAuth) {
+    return next();
+  }
   const authentication = useAuthentication();
 
-  if (!authentication.isAuthenticated() && to.name !== "Login") {
+  await authentication.getMe();
+  if (!authentication.isAuthenticated()) {
     return next({ name: "Login" });
   }
 

@@ -36,11 +36,11 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthentication } from "@/composables/useAuthentication";
 import router from "@/router";
+import { useAuthStore } from "@/store/auth";
 import { ref } from "vue";
 
-const auth = useAuthentication();
+const authStore = useAuthStore();
 
 const isLoading = ref(false);
 const error = ref<string | boolean>(false);
@@ -53,7 +53,7 @@ const login = async () => {
   isLoading.value = true;
   error.value = false;
   try {
-    await auth.login(email.value, password.value);
+    await authStore.login(email.value, password.value);
     router.push({ name: "Dashboard" });
   } catch (e) {
     error.value = "Invalid email or password.";
