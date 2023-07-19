@@ -1,5 +1,9 @@
 <template>
-  <v-navigation-drawer :rail="isRail" permanent>
+  <v-navigation-drawer
+    v-if="authStore.isAuthenticated"
+    :rail="isRail"
+    permanent
+  >
     <v-list>
       <v-list-item :title="adminUser.name" subtitle="Administrator">
         <template v-slot:prepend>
@@ -44,6 +48,14 @@
       <v-divider></v-divider>
       <v-list density="compact" nav>
         <v-list-item
+          prepend-icon="mdi-logout"
+          title="Logout"
+          @click="logout"
+        ></v-list-item>
+      </v-list>
+      <v-divider></v-divider>
+      <v-list density="compact" nav>
+        <v-list-item
           :prepend-icon="isRail ? 'mdi-chevron-right' : 'mdi-chevron-left'"
           title="Collapse Navigation"
           @click="isRail = !isRail"
@@ -56,6 +68,16 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { adminUser } from "@/mockData";
+import { useAuthStore } from "@/store/auth";
+import { useRouter } from "vue-router";
+
+const authStore = useAuthStore();
+const router = useRouter();
 
 const isRail = ref(true);
+
+const logout = async () => {
+  await authStore.logout();
+  router.push({ name: "Login" });
+};
 </script>

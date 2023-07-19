@@ -2,13 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-/**
- * Base User model.
- */
 export type UserRead = {
-  id?: any;
+  id: string;
   email: string;
   is_active?: boolean;
   is_superuser?: boolean;
   is_verified?: boolean;
+  roles?: Array<string>;
+  name: string;
 };

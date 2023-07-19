@@ -1,5 +1,5 @@
-// Composables
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "@/store/auth";
 
 const routes = [
   {
@@ -13,14 +13,22 @@ const routes = [
     component: () => import("@/views/Login.vue"),
   },
   {
+    name: "Dashboard",
+    path: "/dashboard",
+    component: () => import("@/views/Dashboard.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
     name: "Organizations",
     path: "/organizations",
     component: () => import("@/views/Organizations.vue"),
+    meta: { requiresAuth: true },
   },
   {
     name: "Organization",
     path: "/organizations/:organizationId",
     component: () => import("@/views/Organization.vue"),
+    meta: { requiresAuth: true },
   },
 ];
 
@@ -35,6 +43,20 @@ const router = createRouter({
       };
     }
   },
+});
+
+router.beforeEach(async (to, from, next) => {
+  if (!to.meta.requiresAuth) {
+    return next();
+  }
+  const authStore = useAuthStore();
+
+  await authStore.refresh();
+  if (!authStore.isAuthenticated) {
+    return next({ name: "Login" });
+  }
+
+  return next();
 });
 
 export default router;

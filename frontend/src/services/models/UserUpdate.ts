@@ -3,9 +3,11 @@
 /* eslint-disable */
 
 export type UserUpdate = {
-  password?: string;
-  email?: string;
-  is_active?: boolean;
-  is_superuser?: boolean;
-  is_verified?: boolean;
+  password?: string | null;
+  email?: string | null;
+  is_active?: boolean | null;
+  is_superuser?: boolean | null;
+  is_verified?: boolean | null;
+  roles?: Array<string>;
+  name: string;
 };

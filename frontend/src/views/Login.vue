@@ -16,8 +16,17 @@
               :append-inner-icon="isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'"
               @click:append-inner="isPasswordVisible = !isPasswordVisible"
             ></v-text-field>
+            <v-expand-transition>
+              <div v-if="error" class="mb-4">
+                <v-alert density="compact" type="error">
+                  {{ error }}
+                </v-alert>
+              </div>
+            </v-expand-transition>
             <div class="d-flex justify-center">
-              <v-btn color="secondary">Login</v-btn>
+              <v-btn :loading="isLoading" color="secondary" @click="login">
+                Login
+              </v-btn>
             </div>
           </v-card-text>
         </v-card>
@@ -27,15 +36,29 @@
 </template>
 
 <script setup lang="ts">
+import router from "@/router";
+import { useAuthStore } from "@/store/auth";
 import { ref } from "vue";
-import { apiClient } from "@/plugins/api";
+
+const authStore = useAuthStore();
+
+const isLoading = ref(false);
+const error = ref<string | boolean>(false);
 
 const isPasswordVisible = ref(false);
 const email = ref("");
 const password = ref("");
 
-apiClient.auth.authTokenDbLoginAuthLoginPost({
-  username: email.value,
-  password: password.value,
-});
+const login = async () => {
+  isLoading.value = true;
+  error.value = false;
+  try {
+    await authStore.login(email.value, password.value);
+    router.push({ name: "Dashboard" });
+  } catch (e) {
+    error.value = "Invalid email or password.";
+  } finally {
+    isLoading.value = false;
+  }
+};
 </script>

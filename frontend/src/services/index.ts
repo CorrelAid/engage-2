@@ -23,4 +23,3 @@ export type { ValidationError } from "./models/ValidationError";
 
 export { AuthService } from "./services/AuthService";
 export { DefaultService } from "./services/DefaultService";
-export { UsersService } from "./services/UsersService";

@@ -8,6 +8,7 @@ import type { Body_verify_request_token_auth_request_verify_token_post } from ".
 import type { Body_verify_verify_auth_verify_post } from "../models/Body_verify_verify_auth_verify_post";
 import type { UserCreate } from "../models/UserCreate";
 import type { UserRead } from "../models/UserRead";
+import type { UserUpdate } from "../models/UserUpdate";
 
 import type { CancelablePromise } from "../core/CancelablePromise";
 import type { BaseHttpRequest } from "../core/BaseHttpRequest";
@@ -47,27 +48,6 @@ export class AuthService {
       url: "/auth/logout",
       errors: {
         401: `Missing token or inactive user.`,
-      },
-    });
-  }
-
-  /**
-   * Register:Register
-   * @param requestBody
-   * @returns UserRead Successful Response
-   * @throws ApiError
-   */
-  public registerRegisterAuthRegisterPost(
-    requestBody: UserCreate,
-  ): CancelablePromise<UserRead> {
-    return this.httpRequest.request({
-      method: "POST",
-      url: "/auth/register",
-      body: requestBody,
-      mediaType: "application/json",
-      errors: {
-        400: `Bad Request`,
-        422: `Validation Error`,
       },
     });
   }
@@ -114,6 +94,27 @@ export class AuthService {
   }
 
   /**
+   * Register:Register
+   * @param requestBody
+   * @returns UserRead Successful Response
+   * @throws ApiError
+   */
+  public registerRegisterAuthRegisterPost(
+    requestBody: UserCreate,
+  ): CancelablePromise<UserRead> {
+    return this.httpRequest.request({
+      method: "POST",
+      url: "/auth/register",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        400: `Bad Request`,
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
    * Verify:Request-Token
    * @param requestBody
    * @returns any Successful Response
@@ -149,6 +150,116 @@ export class AuthService {
       mediaType: "application/json",
       errors: {
         400: `Bad Request`,
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Users:Current User
+   * @returns UserRead Successful Response
+   * @throws ApiError
+   */
+  public usersCurrentUserAuthMeGet(): CancelablePromise<UserRead> {
+    return this.httpRequest.request({
+      method: "GET",
+      url: "/auth/me",
+      errors: {
+        401: `Missing token or inactive user.`,
+      },
+    });
+  }
+
+  /**
+   * Users:Patch Current User
+   * @param requestBody
+   * @returns UserRead Successful Response
+   * @throws ApiError
+   */
+  public usersPatchCurrentUserAuthMePatch(
+    requestBody: UserUpdate,
+  ): CancelablePromise<UserRead> {
+    return this.httpRequest.request({
+      method: "PATCH",
+      url: "/auth/me",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        400: `Bad Request`,
+        401: `Missing token or inactive user.`,
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Users:User
+   * @param id
+   * @returns UserRead Successful Response
+   * @throws ApiError
+   */
+  public usersUserAuthIdGet(id: string): CancelablePromise<UserRead> {
+    return this.httpRequest.request({
+      method: "GET",
+      url: "/auth/{id}",
+      path: {
+        id: id,
+      },
+      errors: {
+        401: `Missing token or inactive user.`,
+        403: `Not a superuser.`,
+        404: `The user does not exist.`,
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Users:Patch User
+   * @param id
+   * @param requestBody
+   * @returns UserRead Successful Response
+   * @throws ApiError
+   */
+  public usersPatchUserAuthIdPatch(
+    id: string,
+    requestBody: UserUpdate,
+  ): CancelablePromise<UserRead> {
+    return this.httpRequest.request({
+      method: "PATCH",
+      url: "/auth/{id}",
+      path: {
+        id: id,
+      },
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        400: `Bad Request`,
+        401: `Missing token or inactive user.`,
+        403: `Not a superuser.`,
+        404: `The user does not exist.`,
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Users:Delete User
+   * @param id
+   * @returns void
+   * @throws ApiError
+   */
+  public usersDeleteUserAuthIdDelete(id: string): CancelablePromise<void> {
+    return this.httpRequest.request({
+      method: "DELETE",
+      url: "/auth/{id}",
+      path: {
+        id: id,
+      },
+      errors: {
+        401: `Missing token or inactive user.`,
+        403: `Not a superuser.`,
+        404: `The user does not exist.`,
         422: `Validation Error`,
       },
     });

@@ -1,6 +1,6 @@
 import logging
 
-from app.auth.users import current_active_user
+from api.auth.users import current_active_user
 from fastapi import Depends, HTTPException
 
 logger = logging.getLogger()
