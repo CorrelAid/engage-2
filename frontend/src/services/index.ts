@@ -22,4 +22,4 @@ export type { UserUpdate } from "./models/UserUpdate";
 export type { ValidationError } from "./models/ValidationError";
 
 export { AuthService } from "./services/AuthService";
-export { DefaultService } from "./services/DefaultService";
+export { CsrfService } from "./services/CsrfService";

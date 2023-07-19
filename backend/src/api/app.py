@@ -1,11 +1,9 @@
-from typing import Annotated
-
-from api.auth.users import current_active_user
 from api.routers import auth
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
-from models.user import User
 from settings import settings
+from starlette import status
+from starlette_csrf import CSRFMiddleware
 
 app = FastAPI()
 
@@ -17,9 +15,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_middleware(
+    middleware_class=CSRFMiddleware,
+    secret=settings.api.csrf_secret.get_secret_value(),
+    cookie_secure=settings.api.cookie_secure,
+)
+
 app.include_router(router=auth.router)
 
 
-@app.get("/authenticated-route")
-async def authenticated_route(user: Annotated[User, Depends(current_active_user)]):
-    return {"message": f"Hello {user.email}!"}
+@app.get(path="/csrf", status_code=status.HTTP_204_NO_CONTENT, tags=["csrf"])
+async def get_csrf():
+    return Response(content=None, status_code=status.HTTP_204_NO_CONTENT)
