@@ -27,7 +27,7 @@ def upgrade() -> None:
     op.create_table(
         "user",
         sa.Column("name", sa.String(), nullable=True),
-        sa.Column("roles", sa.ARRAY(sa.String()), nullable=True),
+        sa.Column("roles", sa.ARRAY(sa.String()), server_default="{}"),
         sa.Column("id", fastapi_users_db_sqlalchemy.generics.GUID(), nullable=False),
         sa.Column("email", sa.String(length=320), nullable=False),
         sa.Column("hashed_password", sa.String(length=1024), nullable=False),
