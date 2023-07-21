@@ -188,7 +188,11 @@ import {
 const route = useRoute();
 
 const breadcrumbs = computed(() => [
-  { title: "Organizations", to: { name: "Organizations" }, disabled: false },
+  {
+    title: "Organizations",
+    to: { name: "ListOrganizations" },
+    disabled: false,
+  },
   {
     title: organization.value?.name || route.params.organizationId,
     to: {

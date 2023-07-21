@@ -2,6 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type Body_verify_request_token_auth_request_verify_token_post = {
+export type pydantic__main__Body_verify__1 = {
   email: string;
 };

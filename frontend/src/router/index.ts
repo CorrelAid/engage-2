@@ -6,6 +6,7 @@ const routes = [
     name: "LandingPage",
     path: "/",
     component: () => import("@/views/Home.vue"),
+    meta: { requiresAuth: true },
   },
   {
     name: "Login",
@@ -19,9 +20,15 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    name: "Organizations",
+    name: "ListOrganizations",
     path: "/organizations",
-    component: () => import("@/views/Organizations.vue"),
+    component: () => import("@/views/ListOrganizations.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    name: "CreateOrganization",
+    path: "/organizations/create",
+    component: () => import("@/views/CreateOrganization.vue"),
     meta: { requiresAuth: true },
   },
   {
@@ -50,12 +57,10 @@ router.beforeEach(async (to, from, next) => {
     return next();
   }
   const authStore = useAuthStore();
-
   await authStore.refresh();
   if (!authStore.isAuthenticated) {
     return next({ name: "Login" });
   }
-
   return next();
 });
 

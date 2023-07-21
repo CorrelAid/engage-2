@@ -2,6 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type Body_reset_forgot_password_auth_forgot_password_post = {
+export type pydantic__main__Body_reset__1 = {
   email: string;
 };

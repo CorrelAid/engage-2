@@ -6,13 +6,13 @@ import type { OpenAPIConfig } from "./core/OpenAPI";
 import { AxiosHttpRequest } from "./core/AxiosHttpRequest";
 
 import { AuthService } from "./services/AuthService";
-import { DefaultService } from "./services/DefaultService";
+import { OrganizationsService } from "./services/OrganizationsService";
 
 type HttpRequestConstructor = new (config: OpenAPIConfig) => BaseHttpRequest;
 
 export class AppClient {
   public readonly auth: AuthService;
-  public readonly default: DefaultService;
+  public readonly organizations: OrganizationsService;
 
   public readonly request: BaseHttpRequest;
 
@@ -33,6 +33,6 @@ export class AppClient {
     });
 
     this.auth = new AuthService(this.request);
-    this.default = new DefaultService(this.request);
+    this.organizations = new OrganizationsService(this.request);
   }
 }

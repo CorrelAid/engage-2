@@ -2,7 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type Body_reset_reset_password_auth_reset_password_post = {
+export type pydantic__main__Body_verify__2 = {
   token: string;
-  password: string;
 };

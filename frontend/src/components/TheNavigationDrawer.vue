@@ -37,7 +37,7 @@
         title="Projects"
       ></v-list-item>
       <v-list-item
-        :to="{ name: 'Organizations' }"
+        :to="{ name: 'ListOrganizations' }"
         prepend-icon="mdi-domain"
         title="Organizations"
       ></v-list-item>
