@@ -1,14 +1,40 @@
-from typing import Annotated, Sequence
+from typing import Annotated, Literal, Sequence
 from uuid import UUID, uuid4
 
 from database.session import get_async_session
 from fastapi import APIRouter, Depends
-from models.organization import Organization
+from models import Organization, OrganizationContact, OrganizationSector
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/organizations", tags=["organizations"])
+
+LEGAL_FORMS = Literal[
+    "e.V. - Eingetragener Verein",
+    "gGmbH - Gemeinnützige Gesellschaft mit beschränkter Haftung",
+    "GmbH - Gesellschaft mit beschränkter Haftung",
+    "gUG - Gemeinnützige Unternehmergesellschaft",
+    "UG - Unternehmergesellschaft",
+    "Stiftung",
+]
+
+SECTORS = Literal[
+    "Bildung",
+    "Gesundheit",
+    "Kultur",
+    "Sport",
+    "Umwelt",
+]
+
+
+class OrganizationContactRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str = Field(default=...)
+    role: str = Field(default=...)
+    email: str = Field(default=...)
+    phone: str = Field(default=...)
 
 
 class OrganizationRead(BaseModel):
@@ -16,10 +42,16 @@ class OrganizationRead(BaseModel):
 
     id: UUID = Field(default=...)
     name: str = Field(default=...)
+    legal_form_name: LEGAL_FORMS = Field(default=...)
+    sectors: list[SECTORS] = Field(default=...)
+    contacts: list[OrganizationContactRead] = Field(default=[])
 
 
 class OrganizationCreate(BaseModel):
     name: str = Field(default=...)
+    legal_form_name: LEGAL_FORMS = Field(default=...)
+    sectors: list[SECTORS] = Field(default=...)
+    contacts: list[OrganizationContactRead] = Field(default=[])
 
 
 @router.post(path="", response_model=OrganizationRead)
@@ -30,6 +62,14 @@ def create_organization(
     new_organization = Organization(
         id=uuid4(),
         name=organization.name,
+        legal_form_name=organization.legal_form_name,
+        sectors=[
+            OrganizationSector(sector_name=sector) for sector in organization.sectors
+        ],
+        contacts=[
+            OrganizationContact(**contact.model_dump())
+            for contact in organization.contacts
+        ],
     )
     db_session.add(instance=new_organization)
     return new_organization
