@@ -8,6 +8,10 @@ from settings import settings
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 engine = create_async_engine(url=settings.database.dsn)
+# TODO(KW): Consider renaming this in accordance with the SQLAlchemy
+# conventions. In their docs they use Pascal Case for session maker instances and don't
+# include "maker" in the name to reflect that these instances are used similarly
+# to SQLAlchemy's Session classes.
 async_session_maker = async_sessionmaker(bind=engine, expire_on_commit=False)
 
 
