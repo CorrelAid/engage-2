@@ -1,6 +1,6 @@
 import { AppClient } from "@/services";
 
 export const apiClient = new AppClient({
-  BASE: "http://localhost:8000",
+  BASE: import.meta.env.VITE_API_BASE_URL,
   WITH_CREDENTIALS: true,
 });
