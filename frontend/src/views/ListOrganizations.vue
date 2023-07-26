@@ -81,10 +81,10 @@ const fetchOrganizations = async () => {
     organizations.value = await apiClient.organizations.listOrganizations();
   } finally {
     const duration = new Date().getTime() - startTime.getTime();
-    if (duration < 400) {
+    if (duration < 300) {
       setTimeout(() => {
         isLoading.value = false;
-      }, 400 - duration);
+      }, 300 - duration);
     }
   }
 };

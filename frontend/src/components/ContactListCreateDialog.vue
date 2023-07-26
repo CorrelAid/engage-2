@@ -1,10 +1,17 @@
 <template>
   <v-dialog v-model="isDialogVisible" width="500px">
     <template v-slot:activator="{ props }">
-      <v-btn color="primary" v-bind="props"> Add Contact </v-btn>
+      <v-btn v-bind="props" variant="tonal" size="small" color="secondary">
+        <v-icon class="mr-1">mdi-plus</v-icon>
+        Add Contact
+      </v-btn>
     </template>
 
     <v-card>
+      <v-card-title class="d-flex align-center" style="min-height: 52px">
+        <div>Create New Contact</div>
+      </v-card-title>
+      <v-divider></v-divider>
       <v-card-text>
         <v-form
           v-model="isFormValid"
@@ -17,11 +24,12 @@
             :rules="[isValueValid]"
             label="Name"
           ></v-text-field>
-          <v-text-field
+          <v-select
             v-model="role"
+            :items="roles"
             :rules="[isValueValid]"
             label="Role"
-          ></v-text-field>
+          ></v-select>
           <v-text-field
             v-model="email"
             :rules="[isValueValid]"
@@ -66,7 +74,8 @@ const isFormValid = ref(false);
 const form = ref();
 
 const name = ref("");
-const role = ref("");
+const role = ref();
+const roles = ["Organization Contact", "Project Contact"];
 const email = ref("");
 const phone = ref("");
 const isValueValid = (value: string) =>

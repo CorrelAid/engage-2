@@ -94,3 +94,7 @@ class Organization(Base):
         back_populates="organization",
         lazy="selectin",
     )
+
+    @property
+    def sector_names(self) -> list[str]:
+        return [sector.sector_name for sector in self.sectors]

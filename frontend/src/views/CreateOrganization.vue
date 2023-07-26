@@ -5,27 +5,57 @@
         <v-breadcrumbs :items="breadcrumbs" class="px-0"></v-breadcrumbs>
         <h1 class="mb-5">Create Organization</h1>
         <v-form v-model="isFormValid" @submit.prevent="createOrganization">
+          <h2>General Information</h2>
           <v-text-field
             v-model="name"
             label="Name"
             :rules="[nameRule]"
           ></v-text-field>
+
+          <h2>Details</h2>
+          <h3>Legal Form</h3>
+          <p>
+            Please provide the legal form as it appears on your
+            government-issued identification.
+          </p>
           <v-select
             v-model="legalForm"
             :items="legalForms"
             label="Legal Form"
           ></v-select>
+          <h3>Sector</h3>
+          <p>
+            Please select the sector that best describes the industry or field
+            of work.
+          </p>
           <v-select
             v-model="sector"
             :items="sectors"
             label="Sectors"
             multiple
           ></v-select>
-          <contact-list
-            :contacts="contacts"
-            @add-contact="contacts.push($event)"
-            @delete-contact="contacts.splice(contacts.indexOf($event), 1)"
-          ></contact-list>
+
+          <h3>Contacts</h3>
+          <p>
+            An organization contact and a project contact both refer to
+            individuals who can be contacted regarding a particular entity, but
+            they differ in scope and responsibility.
+          </p>
+          <p>
+            An organization contact represents the organization as a whole and
+            is responsible for overall communication and management, while a
+            project contact is associated with a specific project or initiative
+            within the organization and is responsible for managing the details
+            of the project and serving as the point of contact for stakeholders.
+          </p>
+          <div class="mt-4 mb-8">
+            <contact-list
+              :contacts="contacts"
+              @add-contact="contacts.push($event)"
+              @delete-contact="contacts.splice(contacts.indexOf($event), 1)"
+            ></contact-list>
+          </div>
+
           <v-btn
             :disabled="!isFormValid"
             :loading="isLoading"

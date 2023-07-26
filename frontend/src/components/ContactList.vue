@@ -1,4 +1,7 @@
 <template>
+  <contact-list-create-dialog
+    @add-contact="emit('addContact', $event)"
+  ></contact-list-create-dialog>
   <v-list>
     <v-list-item
       v-for="contact in contacts"
@@ -29,9 +32,6 @@
         >
       </template>
     </v-list-item>
-    <contact-list-create-dialog
-      @add-contact="emit('addContact', $event)"
-    ></contact-list-create-dialog>
   </v-list>
 </template>
 
