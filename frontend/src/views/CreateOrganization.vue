@@ -9,7 +9,7 @@
           <v-text-field
             v-model="name"
             label="Name"
-            :rules="[nameRule]"
+            :rules="[required]"
           ></v-text-field>
 
           <h2>Details</h2>
@@ -22,6 +22,7 @@
             v-model="legalForm"
             :items="legalForms"
             label="Legal Form"
+            :rules="[required]"
           ></v-select>
           <h3>Sector</h3>
           <p>
@@ -48,7 +49,7 @@
             within the organization and is responsible for managing the details
             of the project and serving as the point of contact for stakeholders.
           </p>
-          <div class="mt-4 mb-8">
+          <div class="mt-4 mb-4">
             <contact-list
               :contacts="contacts"
               @add-contact="contacts.push($event)"
@@ -56,6 +57,13 @@
             ></contact-list>
           </div>
 
+          <v-expand-transition>
+            <v-alert v-if="error" type="error" icon="$warning" class="mb-4">
+              <b>
+                {{ error }}
+              </b>
+            </v-alert>
+          </v-expand-transition>
           <v-btn
             :disabled="!isFormValid"
             :loading="isLoading"
@@ -74,8 +82,9 @@
 import { apiClient } from "@/plugins/api";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { OrganizationCreate, OrganizationContact } from "@/services";
+import { OrganizationCreate, OrganizationContact, ApiError } from "@/services";
 import ContactList from "@/components/ContactList.vue";
+import { AxiosError } from "axios";
 
 const router = useRouter();
 
@@ -90,9 +99,10 @@ const breadcrumbs = [
 
 const isLoading = ref(false);
 const isFormValid = ref(false);
+const error = ref<string | boolean>(false);
 
+const required = (v: string) => !!v || "Field is required";
 const name = ref("");
-const nameRule = (v: string) => !!v || "Name is required";
 const legalForms = Object.values(OrganizationCreate.legal_form_name);
 const legalForm = ref<OrganizationCreate.legal_form_name>();
 const sectors = ["Bildung", "Gesundheit", "Kultur", "Sport", "Umwelt"];
@@ -111,6 +121,12 @@ const createOrganization = async () => {
       contacts: contacts.value,
     });
     router.push({ name: "ListOrganizations" });
+  } catch (e: unknown) {
+    if (e instanceof ApiError) {
+      error.value = e.message;
+    } else {
+      error.value = "An unknown error occurred.";
+    }
   } finally {
     isLoading.value = false;
   }
