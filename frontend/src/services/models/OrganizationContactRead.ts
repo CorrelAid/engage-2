@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type OrganizationContact = {
+export type OrganizationContactRead = {
   name: string;
   role: string;
   email: string;

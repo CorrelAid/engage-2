@@ -3,12 +3,13 @@ from uuid import UUID, uuid4
 
 from api.auth.users import current_active_user
 from database.session import get_async_session
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from models import Organization, OrganizationContact, OrganizationSector
 from models.user import User
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
 
 router = APIRouter(prefix="/organizations", tags=["organizations"])
 
@@ -87,3 +88,20 @@ async def list_organizations(
 ) -> Sequence[Organization]:
     result = await db_session.execute(select(Organization))
     return result.scalars().all()
+
+
+@router.get(path="/{organization_id}", response_model=OrganizationRead)
+async def get_organization(
+    db_session: Annotated[AsyncSession, Depends(get_async_session)],
+    organization_id: UUID,
+) -> Organization:
+    result = await db_session.execute(
+        select(Organization).where(Organization.id == organization_id)
+    )
+    organization = result.scalar_one_or_none()
+    if organization is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Organization not found.",
+        )
+    return organization

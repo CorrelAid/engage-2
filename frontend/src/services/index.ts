@@ -12,7 +12,7 @@ export type { OpenAPIConfig } from "./core/OpenAPI";
 export type { Body_auth } from "./models/Body_auth";
 export type { ErrorModel } from "./models/ErrorModel";
 export type { HTTPValidationError } from "./models/HTTPValidationError";
-export type { OrganizationContact } from "./models/OrganizationContact";
+export type { OrganizationContactRead } from "./models/OrganizationContactRead";
 export { OrganizationCreate } from "./models/OrganizationCreate";
 export { OrganizationRead } from "./models/OrganizationRead";
 export type { pydantic__main__Body_reset__1 } from "./models/pydantic__main__Body_reset__1";

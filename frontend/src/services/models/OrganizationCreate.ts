@@ -2,13 +2,13 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { OrganizationContact } from "./OrganizationContact";
+import type { OrganizationContactRead } from "./OrganizationContactRead";
 
 export type OrganizationCreate = {
   name: string;
   legal_form_name: OrganizationCreate.legal_form_name;
   sectors: Array<"Bildung" | "Gesundheit" | "Kultur" | "Sport" | "Umwelt">;
-  contacts?: Array<OrganizationContact>;
+  contacts?: Array<OrganizationContactRead>;
 };
 
 export namespace OrganizationCreate {

@@ -41,4 +41,25 @@ export class OrganizationsService {
       },
     });
   }
+
+  /**
+   * Get Organization
+   * @param organizationId
+   * @returns OrganizationRead Successful Response
+   * @throws ApiError
+   */
+  public getOrganization(
+    organizationId: string,
+  ): CancelablePromise<OrganizationRead> {
+    return this.httpRequest.request({
+      method: "GET",
+      url: "/organizations/{organization_id}",
+      path: {
+        organization_id: organizationId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
 }

@@ -5,33 +5,6 @@
         <v-breadcrumbs :items="breadcrumbs" class="px-0"></v-breadcrumbs>
         <div v-if="organization">
           <h1 class="mb-5">{{ organization?.name }}</h1>
-          <div class="mb-8" id="relationship-management">
-            <h2 class="mb-1">Relationship Management</h2>
-
-            <h3 class="mb-1">Relationship Team</h3>
-            <p class="mb-2">
-              Please provide the names or titles of the members of your
-              relationship team for this account or service.
-            </p>
-            <v-select
-              v-model="organization.relationship_team"
-              :items="relationshipTeams"
-              item-title="name"
-              return-object
-            ></v-select>
-
-            <h3 class="mb-1">Relationship Manager</h3>
-            <p class="mb-2">
-              Please provide the name of your relationship manager or point of
-              contact for thisp account or service.
-            </p>
-            <v-select
-              v-model="organization.relationship_contact"
-              :items="relationshipContacts"
-              item-title="name"
-              return-object
-            ></v-select>
-          </div>
 
           <div class="mb-8" id="details">
             <h2 class="mb-1">Details</h2>
@@ -42,7 +15,7 @@
               government-issued identification.
             </p>
             <v-select
-              v-model="organization.legal_form"
+              v-model="organization.legal_form_name"
               :items="legalForms"
               label="Legal Form"
             ></v-select>
@@ -53,9 +26,10 @@
               field of work.
             </p>
             <v-select
-              v-model="organization.sector"
+              v-model="organization.sector_names"
               :items="sectors"
               label="Sector"
+              multiple
             ></v-select>
           </div>
 
@@ -74,45 +48,9 @@
               the details of the project and serving as the point of contact for
               stakeholders.
             </p>
-            <v-list>
-              <v-list-item
-                v-for="contact in organization.contacts"
-                :key="contact.name"
-                :title="contact.name"
-                lines="three"
-                class="px-0"
-              >
-                <template v-slot:prepend>
-                  <v-avatar rounded="lg" color="secondary">
-                    <strong>
-                      {{ contact.name.charAt(0).toUpperCase() }}
-                    </strong>
-                  </v-avatar>
-                </template>
-                <template v-slot:subtitle>
-                  {{ contact.type }}
-                  <br />
-                  {{ contact.email }}
-                  <br />
-                  {{ contact.phone }}
-                </template>
-              </v-list-item>
-            </v-list>
-            <v-btn variant="tonal" size="small" color="secondary">
-              <v-icon class="mr-1">mdi-plus</v-icon>
-              Add Contact
-            </v-btn>
-          </div>
-
-          <div id="notes">
-            <h2 class="mb-1">Notes</h2>
-            <p class="mb-2">
-              You can use the <strong>Notes</strong> field to record additional
-              information. It is used to capture details that may not fit into
-              other fields and is important for keeping a record of interactions
-              and progress.
-            </p>
-            <v-textarea v-model="organization.notes"></v-textarea>
+            <div class="my-4">
+              <contact-list :contacts="organization.contacts!"></contact-list>
+            </div>
           </div>
         </div>
       </v-col>
@@ -136,12 +74,12 @@
     </v-list>
     <v-divider></v-divider>
     <v-list density="compact" nav>
-      <v-list-item
+      <!-- <v-list-item
         :to="{ hash: '#relationship-management' }"
         title="Relationship Management"
         prepend-icon="mdi-account-arrow-right"
         :active="false"
-      ></v-list-item>
+      ></v-list-item> -->
       <v-list-item
         :to="{ hash: '#details' }"
         title="Details"
@@ -154,12 +92,12 @@
         prepend-icon="mdi-account-arrow-left"
         :active="false"
       ></v-list-item>
-      <v-list-item
+      <!-- <v-list-item
         :to="{ hash: '#notes' }"
         title="Notes"
         prepend-icon="mdi-text-box-outline"
         :active="false"
-      ></v-list-item>
+      ></v-list-item> -->
     </v-list>
     <template v-slot:append>
       <v-divider></v-divider>
@@ -177,13 +115,9 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
-import {
-  relationshipContacts,
-  relationshipTeams,
-  legalForms,
-  sectors,
-  sampleOrganization,
-} from "@/mockData";
+import { apiClient } from "@/plugins/api";
+import { OrganizationCreate, OrganizationRead } from "@/services";
+import ContactList from "@/components/ContactList.vue";
 
 const route = useRoute();
 
@@ -196,7 +130,7 @@ const breadcrumbs = computed(() => [
   {
     title: organization.value?.name || route.params.organizationId,
     to: {
-      name: "Organization",
+      name: "ViewOrganization",
       params: { organizationId: route.params.organizationId },
     },
     disabled: true,
@@ -205,35 +139,22 @@ const breadcrumbs = computed(() => [
 
 const isRail = ref(false);
 
-interface OrganizationContact {
-  name: string;
-  email: string;
-  phone: string;
-  type: "Organization Contact" | "Project Contact";
-}
-
-interface Organization {
-  id: string;
-  name: string;
-  legal_form: string;
-  sector: string;
-  relationship_team: {
-    id: string;
-    name: string;
-  };
-  relationship_contact: {
-    id: string;
-    name: string;
-  };
-  contacts: OrganizationContact[];
-  notes: string;
-}
-
 const isLoading = ref(false);
-const organization = ref<Organization>();
+const organization = ref<OrganizationRead>();
+const legalForms = Object.values(OrganizationCreate.legal_form_name);
+const sectors = ["Bildung", "Gesundheit", "Kultur", "Sport", "Umwelt"];
 
 const fetchOrganization = async () => {
-  organization.value = sampleOrganization;
+  isLoading.value = true;
+  try {
+    organization.value = await apiClient.organizations.getOrganization(
+      route.params.organizationId.toString(),
+    );
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 onBeforeMount(async () => {

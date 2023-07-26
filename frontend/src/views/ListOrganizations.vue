@@ -41,7 +41,7 @@
                 size="small"
                 icon="mdi-arrow-right"
                 :to="{
-                  name: 'Organization',
+                  name: 'ViewOrganization',
                   params: { organizationId: organization.id },
                 }"
               >
