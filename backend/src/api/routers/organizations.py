@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 
 from api.auth.users import current_active_user
 from database.session import get_async_session
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Path
 from models import Organization, OrganizationContact, OrganizationSector
 from models.user import User
 from pydantic import BaseModel, ConfigDict, Field
@@ -29,6 +29,16 @@ SECTORS = Literal[
     "Sport",
     "Umwelt",
 ]
+
+
+async def get_organization_by_id(
+    db_session: Annotated[AsyncSession, Depends(get_async_session)],
+    organization_id: Annotated[UUID, Path()],
+) -> Organization:
+    organization = await db_session.get(Organization, organization_id)
+    if organization is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Organization not found.")
+    return organization
 
 
 class OrganizationContactRead(BaseModel):
@@ -92,16 +102,29 @@ async def list_organizations(
 
 @router.get(path="/{organization_id}", response_model=OrganizationRead)
 async def get_organization(
-    db_session: Annotated[AsyncSession, Depends(get_async_session)],
-    organization_id: UUID,
+    organization: Annotated[Organization, Depends(get_organization_by_id)],
 ) -> Organization:
-    result = await db_session.execute(
-        select(Organization).where(Organization.id == organization_id)
-    )
-    organization = result.scalar_one_or_none()
-    if organization is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Organization not found.",
-        )
     return organization
+
+
+class OrganizationUpdate(BaseModel):
+    name: str = Field(default=...)
+    legal_form_name: LEGAL_FORMS = Field(default=...)
+    sectors: list[SECTORS] = Field(default=...)
+    contacts: list[OrganizationContactRead] = Field(default=[])
+
+
+@router.patch(path="/{organization_id}", response_model=OrganizationRead)
+async def update_organization(
+    organization: Annotated[Organization, Depends(get_organization_by_id)],
+    updated_organization: OrganizationUpdate,
+) -> Organization:
+    return organization
+
+
+@router.delete(path="/{organization_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_organization(
+    db_session: Annotated[AsyncSession, Depends(get_async_session)],
+    organization: Annotated[Organization, Depends(get_organization_by_id)],
+) -> None:
+    await db_session.delete(organization)
