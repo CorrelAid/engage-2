@@ -2,7 +2,7 @@
 FROM node:18-alpine AS build-stage
 WORKDIR /vue_app
 COPY package.json ./
-RUN npm install --omit=dev
+RUN npm install
 COPY . .
 RUN npm run build
 

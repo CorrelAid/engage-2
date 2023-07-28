@@ -1,0 +1,68 @@
+#cloud-config
+apt:
+  sources:
+    docker.list:
+      source: deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable
+      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    caddy.list:
+      source: deb [arch=amd64] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main
+      keyid: 155B6D79CA56EA34
+
+packages:
+  - apt-listchanges
+  - caddy
+  - containerd.io
+  - dbus-user-session
+  - docker-ce
+  - docker-ce-cli
+  - unattended-upgrades
+  - uidmap
+  - unzip
+
+package_update: true
+package_upgrade: true
+
+users:
+  - name: deploy
+    home: /home/deploy
+    shell: /bin/bash
+    ssh-authorized-keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDy3/INt09qozO/PFOo0CiHgNYIbs2kQqvIZsA8iNC1b jan
+
+runcmd:
+  - systemctl daemon-reload
+  - systemctl disable docker
+  - chown -R deploy:deploy /home/deploy
+  - runuser -l deploy -c 'dockerd-rootless-setuptool.sh install'
+  - runuser -l deploy -c 'systemctl --user start docker'
+  - runuser -l deploy -c 'systemctl --user enable docker'
+  - loginctl enable-linger $(id -u deploy)
+  - mkdir -p /var/www/html
+  - chown -R deploy:deploy /var/www/html/
+  - mkdir -p /etc/caddy/caddy.d
+  - chown -R deploy:deploy /etc/caddy/caddy.d/
+
+write_files:
+  - content: |
+      export PATH=/usr/bin:$PATH
+      export DOCKER_HOST=unix:///run/user/1000/docker.sock
+    path: /home/deploy/.bash_profile
+  - content: DOCKER_HOST=unix:///run/user/1000/docker.sock
+    append: true
+    path: /etc/environment
+  - content: |
+      {
+      "log-driver": "journald"
+      }
+    path: /home/deploy/.config/docker/daemon.json
+  - content: |
+      deploy ALL= NOPASSWD: /bin/systemctl reload caddy
+
+    path: /etc/sudoers.d/reload-caddy
+    permission: "0440"
+  - content: |
+      {
+        admin unix//tmp/caddy.sock
+      }
+      import /etc/caddy/caddy.d/*.conf
+    path: /etc/caddy/Caddyfile
