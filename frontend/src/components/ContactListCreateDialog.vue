@@ -61,11 +61,11 @@
 </template>
 
 <script setup lang="ts">
-import { OrganizationContact } from "@/services";
+import { OrganizationContactRead } from "@/services";
 import { ref } from "vue";
 
 const emit = defineEmits<{
-  (e: "addContact", contact: OrganizationContact): void;
+  (e: "addContact", contact: OrganizationContactRead): void;
 }>();
 
 const isDialogVisible = ref(false);

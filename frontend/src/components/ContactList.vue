@@ -36,15 +36,15 @@
 </template>
 
 <script setup lang="ts">
-import { OrganizationContact } from "@/services";
+import { OrganizationContactRead } from "@/services";
 import ContactListCreateDialog from "./ContactListCreateDialog.vue";
 
 const props = defineProps<{
-  contacts: OrganizationContact[];
+  contacts: OrganizationContactRead[];
 }>();
 
 const emit = defineEmits<{
-  (e: "addContact", contact: OrganizationContact): void;
-  (e: "deleteContact", contact: OrganizationContact): void;
+  (e: "addContact", contact: OrganizationContactRead): void;
+  (e: "deleteContact", contact: OrganizationContactRead): void;
 }>();
 </script>

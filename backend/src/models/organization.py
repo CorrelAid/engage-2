@@ -20,9 +20,7 @@ class OrganizationContact(Base):
     email: Mapped[str] = mapped_column(String(length=255), nullable=False)
     phone: Mapped[str] = mapped_column(String(length=255), nullable=False)
 
-    organization: Mapped["Organization"] = relationship(
-        back_populates="contacts",
-    )
+    organization: Mapped["Organization"] = relationship("Organization")
 
 
 class Organization(Base):
@@ -57,6 +55,7 @@ class Organization(Base):
     )
 
     contacts: Mapped[list["OrganizationContact"]] = relationship(
-        back_populates="organization",
+        "OrganizationContact",
         lazy="selectin",
+        cascade="all,delete",
     )

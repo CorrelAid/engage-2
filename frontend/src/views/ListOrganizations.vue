@@ -81,11 +81,10 @@ const fetchOrganizations = async () => {
     organizations.value = await apiClient.organizations.listOrganizations();
   } finally {
     const duration = new Date().getTime() - startTime.getTime();
-    if (duration < 300) {
-      setTimeout(() => {
-        isLoading.value = false;
-      }, 300 - duration);
-    }
+    const timeout = duration >= 300 ? 0 : 300 - duration;
+    setTimeout(() => {
+      isLoading.value = false;
+    }, timeout);
   }
 };
 

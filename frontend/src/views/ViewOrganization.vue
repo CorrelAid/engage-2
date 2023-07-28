@@ -3,8 +3,8 @@
     <v-row class="justify-center">
       <v-col cols="12" md="10" lg="8">
         <v-breadcrumbs :items="breadcrumbs" class="px-0"></v-breadcrumbs>
-        <div v-if="organization">
-          <h1 class="mb-5">{{ organization?.name }}</h1>
+        <div v-if="updatedOrganization">
+          <h1 class="mb-5">{{ updatedOrganization?.name }}</h1>
 
           <div class="mb-8" id="details">
             <h2 class="mb-1">Details</h2>
@@ -15,7 +15,7 @@
               government-issued identification.
             </p>
             <v-select
-              v-model="organization.legal_form_name"
+              v-model="updatedOrganization.legal_form"
               :items="legalForms"
               label="Legal Form"
             ></v-select>
@@ -26,7 +26,7 @@
               field of work.
             </p>
             <v-select
-              v-model="organization.sector_names"
+              v-model="updatedOrganization.sectors"
               :items="sectors"
               label="Sector"
               multiple
@@ -49,7 +49,16 @@
               stakeholders.
             </p>
             <div class="my-4">
-              <contact-list :contacts="organization.contacts!"></contact-list>
+              <contact-list
+                :contacts="updatedOrganization.contacts!"
+                @add-contact="updatedOrganization.contacts!.push($event)"
+                @delete-contact="
+                  updatedOrganization.contacts!.splice(
+                    updatedOrganization.contacts!.indexOf($event),
+                    1,
+                  )
+                "
+              ></contact-list>
             </div>
           </div>
         </div>
@@ -101,6 +110,20 @@
     </v-list>
     <template v-slot:append>
       <v-divider></v-divider>
+      <div class="pa-2">
+        <v-btn
+          :disabled="_isEqual(organization, updatedOrganization)"
+          :loading="isUpdateLoading"
+          variant="tonal"
+          color="secondary"
+          block
+          @click="updateOrganization"
+        >
+          <v-icon :class="{ 'mr-1': !isRail }">mdi-content-save</v-icon>
+          <span v-if="!isRail">Save Changes</span>
+        </v-btn>
+      </div>
+      <v-divider></v-divider>
       <v-list density="compact" nav>
         <v-list-item
           :prepend-icon="isRail ? 'mdi-chevron-left' : 'mdi-chevron-right'"
@@ -116,8 +139,13 @@
 import { computed, onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
 import { apiClient } from "@/plugins/api";
-import { OrganizationCreate, OrganizationRead } from "@/services";
+import {
+  OrganizationCreate,
+  OrganizationRead,
+  OrganizationUpdate,
+} from "@/services";
 import ContactList from "@/components/ContactList.vue";
+import { isEqual as _isEqual } from "lodash-es";
 
 const route = useRoute();
 
@@ -141,19 +169,45 @@ const isRail = ref(false);
 
 const isLoading = ref(false);
 const organization = ref<OrganizationRead>();
+const updatedOrganization = ref<OrganizationUpdate>();
 const legalForms = Object.values(OrganizationCreate.legal_form_name);
 const sectors = ["Bildung", "Gesundheit", "Kultur", "Sport", "Umwelt"];
 
 const fetchOrganization = async () => {
   isLoading.value = true;
   try {
-    organization.value = await apiClient.organizations.getOrganization(
-      route.params.organizationId.toString(),
-    );
+    const response = (organization.value =
+      await apiClient.organizations.getOrganization(
+        route.params.organizationId.toString(),
+      ));
+    organization.value = structuredClone(response);
+    updatedOrganization.value = structuredClone(response);
   } catch (error) {
     console.error(error);
   } finally {
     isLoading.value = false;
+  }
+};
+
+const isUpdateLoading = ref(false);
+
+const updateOrganization = async () => {
+  isUpdateLoading.value = true;
+  const startTime = new Date();
+  try {
+    const response = await apiClient.organizations.updateOrganization(
+      route.params.organizationId.toString(),
+      updatedOrganization.value!,
+    );
+    organization.value = structuredClone(response);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    const duration = new Date().getTime() - startTime.getTime();
+    const timeout = duration >= 300 ? 0 : 300 - duration;
+    setTimeout(() => {
+      isUpdateLoading.value = false;
+    }, timeout);
   }
 };
 

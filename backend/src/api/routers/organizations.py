@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path
 from models import Organization, OrganizationContact
 from models.user import User
 from pydantic import BaseModel, ConfigDict, Field
-from sqlalchemy import select
+from sqlalchemy import delete, insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -62,7 +62,7 @@ class OrganizationRead(BaseModel):
 
 class OrganizationCreate(BaseModel):
     name: str = Field(default=...)
-    legal_form_name: LEGAL_FORMS = Field(default=...)
+    legal_form: LEGAL_FORMS = Field(default=...)
     sectors: list[SECTORS] = Field(default=...)
     contacts: list[OrganizationContactRead] = Field(default=[])
 
@@ -76,7 +76,7 @@ async def create_organization(
     new_organization = Organization(
         id=uuid4(),
         name=organization.name,
-        legal_form=organization.legal_form_name,
+        legal_form=organization.legal_form,
         created_by=current_active_user.id,
         updated_by=current_active_user.id,
         sectors=organization.sectors,
@@ -116,7 +116,25 @@ class OrganizationUpdate(BaseModel):
 async def update_organization(
     organization: Annotated[Organization, Depends(get_organization_by_id)],
     updated_organization: OrganizationUpdate,
+    db_session: Annotated[AsyncSession, Depends(get_async_session)],
 ) -> Organization:
+    for key, value in updated_organization.model_dump(
+        exclude_defaults=True, exclude={"contacts": True}
+    ).items():
+        if getattr(organization, key) != value:
+            setattr(organization, key, value)
+    delete_query = delete(table=OrganizationContact).where(
+        OrganizationContact.organization_id == organization.id
+    )
+    await db_session.execute(statement=delete_query)
+    insert_query = insert(table=OrganizationContact)
+    await db_session.execute(
+        statement=insert_query,
+        params=[
+            {"organization_id": organization.id, **contact.model_dump()}
+            for contact in updated_organization.contacts
+        ],
+    )
     return organization
 
 
