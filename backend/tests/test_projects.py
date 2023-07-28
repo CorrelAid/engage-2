@@ -62,3 +62,40 @@ async def test_project_crud(async_client, admin_details):
 
         response = await ac.get(f"/projects/{project_id}", headers=auth_cookie_header)
         assert response.status_code == 404
+
+
+async def test_project_crud_no_db(
+    async_client, admin_details, override_project_store, override_active_user
+):
+    project = {
+        "title": "Inserted Project",
+        "status": "running",
+    }
+
+    async with async_client as ac:
+        response = await ac.post("/projects/", json=project)
+        assert response.status_code == 201
+
+        project_id = response.json()["id"]
+
+        response = await ac.get(f"/projects/{project_id}")
+        assert response.status_code == 200
+        assert response.json()["title"] == project["title"]
+        assert response.json()["status"] == project["status"]
+        assert response.json()["summary"] is None
+
+        project["title"] = "Updated Project"
+        project["summary"] = "Updated Summary"
+
+        response = await ac.patch(f"/projects/{project_id}", json=project)
+        response = await ac.get(f"/projects/{project_id}")
+        assert response.status_code == 200
+        assert response.json()["title"] == project["title"]
+        assert response.json()["status"] == project["status"]
+        assert response.json()["summary"] == project["summary"]
+
+        response = await ac.delete(f"/projects/{project_id}")
+        assert response.status_code == 204
+
+        response = await ac.get(f"/projects/{project_id}")
+        assert response.status_code == 404

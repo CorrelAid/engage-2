@@ -1,11 +1,11 @@
 import uuid
-from typing import Annotated, AsyncIterator
+from typing import Annotated
 
-import pydantic
 from api.auth.users import current_active_user
-from database.session import async_session_maker
+from database.session import transactional_session
 from fastapi import APIRouter, Depends, HTTPException, status
 from models.project import Project
+from pydantic import BaseModel, ConfigDict, TypeAdapter
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,41 +13,69 @@ from sqlalchemy.ext.asyncio import AsyncSession
 router = APIRouter()
 
 
-class ReadProject(pydantic.BaseModel):
+class ReadProject(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: uuid.UUID
     title: str
     summary: str | None = None
     status: str
 
 
-class CreateProject(pydantic.BaseModel):
+class CreateProject(BaseModel):
     title: str
     summary: str | None = None
     status: str
 
 
-class UpdateProject(pydantic.BaseModel):
+class UpdateProject(BaseModel):
     title: str | None = None
     summary: str | None = None
     status: str | None = None
 
 
-async def get_project(project_id: uuid.UUID, session: AsyncSession) -> Project:
-    try:
-        project_entry = (
-            await session.execute(select(Project).filter_by(id=project_id))
-        ).scalar_one()
-    except NoResultFound:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    return project_entry
+class ProjectStore:
+    def __init__(
+        self, session: Annotated[AsyncSession, Depends(transactional_session)]
+    ):
+        self.session = session
 
+    async def _get_orm_project(self, project_id: uuid.UUID) -> Project:
+        try:
+            project_entry = (
+                await self.session.execute(select(Project).filter_by(id=project_id))
+            ).scalar_one()
+        except NoResultFound:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        return project_entry
 
-async def transactional_session() -> AsyncIterator[AsyncSession]:
-    async with async_session_maker.begin() as session:
-        yield session
+    async def get(self, project_id: uuid.UUID) -> ReadProject:
+        project_entry = await self._get_orm_project(project_id)
+        return TypeAdapter(ReadProject).validate_python(project_entry)
 
+    async def get_all(self) -> list[ReadProject]:
+        stmt = select(Project)
+        projects = (await self.session.scalars(stmt)).all()
+        return TypeAdapter(list[ReadProject]).validate_python(projects)
 
-SessionWithTransactionContext = Annotated[AsyncSession, Depends(transactional_session)]
+    async def create(self, project: CreateProject) -> ReadProject:
+        new_project = Project(id=uuid.uuid4(), **project.model_dump())
+        self.session.add(new_project)
+        return TypeAdapter(ReadProject).validate_python(new_project)
+
+    async def delete(self, project_id: uuid.UUID) -> None:
+        project_entry = await self._get_orm_project(project_id)
+        await self.session.delete(project_entry)
+        return None
+
+    async def update(
+        self, project_id: uuid.UUID, project: UpdateProject
+    ) -> ReadProject:
+        project_entry = await self._get_orm_project(project_id)
+        for key, value in project.model_dump(exclude_defaults=True).items():
+            if getattr(project_entry, key) != value:
+                setattr(project_entry, key, value)
+        return TypeAdapter(ReadProject).validate_python(project_entry)
 
 
 @router.get(
@@ -56,14 +84,10 @@ SessionWithTransactionContext = Annotated[AsyncSession, Depends(transactional_se
     dependencies=[Depends(current_active_user)],
 )
 async def list_projects(
-    session: SessionWithTransactionContext,
+    project_store: Annotated[ProjectStore, Depends()],
 ) -> list[ReadProject]:
-    stmt = select(Project)
-    projects = (await session.scalars(stmt)).all()
-    return [
-        ReadProject(id=p.id, title=p.title, summary=p.summary, status=p.status)
-        for p in projects
-    ]
+    projects = await project_store.get_all()
+    return projects
 
 
 @router.post(
@@ -73,16 +97,11 @@ async def list_projects(
     dependencies=[Depends(current_active_user)],
 )
 async def create_project(
-    project: CreateProject, session: SessionWithTransactionContext
+    project: CreateProject,
+    project_store: Annotated[ProjectStore, Depends()],
 ) -> ReadProject:
-    new_project = Project(id=uuid.uuid4(), **project.dict())
-    session.add(new_project)
-    return ReadProject(
-        id=new_project.id,
-        title=new_project.title,
-        summary=new_project.summary,
-        status=new_project.status,
-    )
+    new_project = await project_store.create(project)
+    return new_project
 
 
 @router.get(
@@ -91,15 +110,11 @@ async def create_project(
     dependencies=[Depends(current_active_user)],
 )
 async def read_project(
-    project_id: uuid.UUID, session: SessionWithTransactionContext
+    project_id: uuid.UUID,
+    project_store: Annotated[ProjectStore, Depends()],
 ) -> ReadProject:
-    project_entry = await get_project(project_id, session)
-    return ReadProject(
-        id=project_entry.id,
-        title=project_entry.title,
-        summary=project_entry.summary,
-        status=project_entry.status,
-    )
+    project_entry = await project_store.get(project_id)
+    return project_entry
 
 
 @router.delete(
@@ -109,10 +124,10 @@ async def read_project(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_project(
-    project_id: uuid.UUID, session: SessionWithTransactionContext
+    project_id: uuid.UUID,
+    project_store: Annotated[ProjectStore, Depends()],
 ) -> None:
-    project_entry = await get_project(project_id, session)
-    await session.delete(project_entry)
+    await project_store.delete(project_id)
     return None
 
 
@@ -124,15 +139,7 @@ async def delete_project(
 async def update_project(
     project_id: uuid.UUID,
     project: UpdateProject,
-    session: SessionWithTransactionContext,
+    project_store: Annotated[ProjectStore, Depends()],
 ) -> ReadProject:
-    project_entry = await get_project(project_id, session)
-    for key, value in project.model_dump(exclude_defaults=True).items():
-        if getattr(project_entry, key) != value:
-            setattr(project_entry, key, value)
-    return ReadProject(
-        id=project_entry.id,
-        title=project_entry.title,
-        summary=project_entry.summary,
-        status=project_entry.status,
-    )
+    project_entry = await project_store.update(project_id, project)
+    return project_entry

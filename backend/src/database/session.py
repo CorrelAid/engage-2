@@ -1,4 +1,4 @@
-from typing import AsyncGenerator
+from typing import AsyncGenerator, AsyncIterator
 
 from fastapi import Depends
 from fastapi_users.db import SQLAlchemyUserDatabase
@@ -26,3 +26,8 @@ async def get_user_service(session: AsyncSession = Depends(get_async_session)):
 
 async def get_access_token_service(session: AsyncSession = Depends(get_async_session)):
     yield SQLAlchemyAccessTokenDatabase(session, AccessToken)
+
+
+async def transactional_session() -> AsyncIterator[AsyncSession]:
+    async with async_session_maker.begin() as session:
+        yield session
