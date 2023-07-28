@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from api.auth.users import current_active_user
-from api.routers import auth
+from api.routers import auth, projects
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models.user import User
@@ -18,6 +18,7 @@ app.add_middleware(
 )
 
 app.include_router(router=auth.router)
+app.include_router(router=projects.router, prefix="/projects", tags=["projects"])
 
 
 @app.get("/authenticated-route")

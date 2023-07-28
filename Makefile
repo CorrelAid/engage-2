@@ -23,3 +23,6 @@ migrate:
 
 stop-test-db:
 	docker compose down
+
+lint-backend:
+	cd backend && poetry run pre-commit run -c ../.pre-commit-config.yaml

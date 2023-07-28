@@ -29,6 +29,7 @@ class DatabaseCredentials(BaseModel):
 
 class TestConfiguration(BaseModel):
     test_database: bool = False
+    use_latest_migration: bool = True
 
 
 def is_src_root_dir(directory: Path):
