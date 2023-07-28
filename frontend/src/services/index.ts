@@ -15,6 +15,7 @@ export type { HTTPValidationError } from "./models/HTTPValidationError";
 export type { OrganizationContactRead } from "./models/OrganizationContactRead";
 export { OrganizationCreate } from "./models/OrganizationCreate";
 export { OrganizationRead } from "./models/OrganizationRead";
+export { OrganizationUpdate } from "./models/OrganizationUpdate";
 export type { pydantic__main__Body_reset__1 } from "./models/pydantic__main__Body_reset__1";
 export type { pydantic__main__Body_reset__2 } from "./models/pydantic__main__Body_reset__2";
 export type { pydantic__main__Body_verify__1 } from "./models/pydantic__main__Body_verify__1";

@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 from api.auth.users import current_active_user
 from database.session import get_async_session
 from fastapi import APIRouter, Depends, HTTPException, Path
-from models import Organization, OrganizationContact, OrganizationSector
+from models import Organization, OrganizationContact
 from models.user import User
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
@@ -55,8 +55,8 @@ class OrganizationRead(BaseModel):
 
     id: UUID = Field(default=...)
     name: str = Field(default=...)
-    legal_form_name: LEGAL_FORMS = Field(default=...)
-    sector_names: list[SECTORS] = Field(default=...)
+    legal_form: LEGAL_FORMS = Field(default=...)
+    sectors: list[SECTORS] = Field(default=...)
     contacts: list[OrganizationContactRead] = Field(default=[])
 
 
@@ -76,12 +76,10 @@ async def create_organization(
     new_organization = Organization(
         id=uuid4(),
         name=organization.name,
-        legal_form_name=organization.legal_form_name,
+        legal_form=organization.legal_form_name,
         created_by=current_active_user.id,
         updated_by=current_active_user.id,
-        sectors=[
-            OrganizationSector(sector_name=sector) for sector in organization.sectors
-        ],
+        sectors=organization.sectors,
         contacts=[
             OrganizationContact(**contact.model_dump())
             for contact in organization.contacts
@@ -109,7 +107,7 @@ async def get_organization(
 
 class OrganizationUpdate(BaseModel):
     name: str = Field(default=...)
-    legal_form_name: LEGAL_FORMS = Field(default=...)
+    legal_form: LEGAL_FORMS = Field(default=...)
     sectors: list[SECTORS] = Field(default=...)
     contacts: list[OrganizationContactRead] = Field(default=[])
 
