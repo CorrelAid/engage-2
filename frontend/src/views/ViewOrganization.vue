@@ -3,7 +3,14 @@
     <v-row class="justify-center">
       <v-col cols="12" md="10" lg="8">
         <v-breadcrumbs :items="breadcrumbs" class="px-0"></v-breadcrumbs>
-        <div v-if="updatedOrganization">
+        <div v-if="isLoading">
+          <v-skeleton-loader
+            v-if="isLoading"
+            type="heading, list-item, list-item, list-item"
+          ></v-skeleton-loader>
+        </div>
+
+        <div v-if="updatedOrganization && !isLoading">
           <div class="d-flex align-center justify-space-between mb-5">
             <h1
               id="organizationName"
@@ -150,6 +157,7 @@
 </template>
 
 <script setup lang="ts">
+import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 import { computed, onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
 import { apiClient } from "@/plugins/api";
@@ -189,6 +197,7 @@ const sectors = ["Bildung", "Gesundheit", "Kultur", "Sport", "Umwelt"];
 
 const fetchOrganization = async () => {
   isLoading.value = true;
+  const startTime = new Date();
   try {
     const response = (organization.value =
       await apiClient.organizations.getOrganization(
@@ -199,7 +208,11 @@ const fetchOrganization = async () => {
   } catch (error) {
     console.error(error);
   } finally {
-    isLoading.value = false;
+    const duration = new Date().getTime() - startTime.getTime();
+    const timeout = duration >= 300 ? 0 : 300 - duration;
+    setTimeout(() => {
+      isLoading.value = false;
+    }, timeout);
   }
 };
 
