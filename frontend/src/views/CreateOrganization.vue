@@ -82,7 +82,11 @@
 import { apiClient } from "@/plugins/api";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { OrganizationCreate, OrganizationContact, ApiError } from "@/services";
+import {
+  OrganizationCreate,
+  OrganizationContactRead,
+  ApiError,
+} from "@/services";
 import ContactList from "@/components/ContactList.vue";
 import { AxiosError } from "axios";
 
@@ -103,20 +107,20 @@ const error = ref<string | boolean>(false);
 
 const required = (v: string) => !!v || "Field is required";
 const name = ref("");
-const legalForms = Object.values(OrganizationCreate.legal_form_name);
-const legalForm = ref<OrganizationCreate.legal_form_name>();
+const legalForms = Object.values(OrganizationCreate.legal_form);
+const legalForm = ref<OrganizationCreate.legal_form>();
 const sectors = ["Bildung", "Gesundheit", "Kultur", "Sport", "Umwelt"];
 const sector = ref<
   Array<"Bildung" | "Gesundheit" | "Kultur" | "Sport" | "Umwelt">
 >([]);
-const contacts = ref<OrganizationContact[]>([]);
+const contacts = ref<OrganizationContactRead[]>([]);
 
 const createOrganization = async () => {
   isLoading.value = true;
   try {
     await apiClient.organizations.createOrganization({
       name: name.value,
-      legal_form_name: legalForm.value!,
+      legal_form: legalForm.value!,
       sectors: sector.value,
       contacts: contacts.value,
     });

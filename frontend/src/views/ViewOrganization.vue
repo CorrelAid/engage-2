@@ -4,7 +4,7 @@
       <v-col cols="12" md="10" lg="8">
         <v-breadcrumbs :items="breadcrumbs" class="px-0"></v-breadcrumbs>
         <div v-if="updatedOrganization">
-          <h1 class="mb-5">{{ updatedOrganization?.name }}</h1>
+          <h1 class="mb-5">{{ updatedOrganization.name }}</h1>
 
           <div class="mb-8" id="details">
             <h2 class="mb-1">Details</h2>
@@ -170,7 +170,7 @@ const isRail = ref(false);
 const isLoading = ref(false);
 const organization = ref<OrganizationRead>();
 const updatedOrganization = ref<OrganizationUpdate>();
-const legalForms = Object.values(OrganizationCreate.legal_form_name);
+const legalForms = Object.values(OrganizationCreate.legal_form);
 const sectors = ["Bildung", "Gesundheit", "Kultur", "Sport", "Umwelt"];
 
 const fetchOrganization = async () => {
