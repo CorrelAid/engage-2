@@ -4,7 +4,21 @@
       <v-col cols="12" md="10" lg="8">
         <v-breadcrumbs :items="breadcrumbs" class="px-0"></v-breadcrumbs>
         <div v-if="updatedOrganization">
-          <h1 class="mb-5">{{ updatedOrganization.name }}</h1>
+          <div class="d-flex align-center justify-space-between mb-5">
+            <h1
+              id="organizationName"
+              ref="organizationName"
+              class="d-flex flex-grow-1"
+              contenteditable="true"
+              @keydown.enter="updateName"
+              @blur="updateName"
+            >
+              {{ updatedOrganization.name }}
+            </h1>
+            <v-icon class="ml-2" @click="focusOrganizationName">
+              mdi-pencil
+            </v-icon>
+          </div>
 
           <div class="mb-8" id="details">
             <h2 class="mb-1">Details</h2>
@@ -189,7 +203,20 @@ const fetchOrganization = async () => {
   }
 };
 
+const organizationName = ref();
 const isUpdateLoading = ref(false);
+
+const focusOrganizationName = async () => {
+  const nameElement = document.getElementById("organizationName");
+  nameElement?.focus();
+};
+
+const updateName = async (event: Event) => {
+  (event.target as HTMLInputElement).blur();
+  updatedOrganization.value!.name = (
+    event.target as HTMLInputElement
+  ).innerText;
+};
 
 const updateOrganization = async () => {
   isUpdateLoading.value = true;
