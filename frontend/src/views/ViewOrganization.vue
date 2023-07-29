@@ -153,6 +153,47 @@
       </v-list-item>
     </v-list>
     <v-divider></v-divider>
+    <v-list v-if="organization">
+      <v-list-item>
+        <v-list-item-subtitle> Created by </v-list-item-subtitle>
+        <v-list-item-title>
+          {{ organization.created_by }}
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item>
+        <v-list-item-subtitle> Created at </v-list-item-subtitle>
+        <v-list-item-title>
+          {{ organization.created_at }}
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item>
+        <v-list-item-subtitle> Updated by </v-list-item-subtitle>
+        <v-list-item-title>
+          {{ organization.updated_by }}
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item>
+        <v-list-item-subtitle> Updated at </v-list-item-subtitle>
+        <v-list-item-title>
+          {{ organization.updated_at }}
+        </v-list-item-title>
+      </v-list-item>
+      <div v-if="organization.archived_at">
+        <v-list-item>
+          <v-list-item-subtitle> Archived by </v-list-item-subtitle>
+          <v-list-item-title>
+            {{ organization.archived_by }}
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-subtitle> Archived at </v-list-item-subtitle>
+          <v-list-item-title>
+            {{ organization.archived_at }}
+          </v-list-item-title>
+        </v-list-item>
+      </div>
+    </v-list>
+    <v-divider></v-divider>
     <v-list density="compact" nav>
       <!-- <v-list-item
         :to="{ hash: '#relationship-management' }"
