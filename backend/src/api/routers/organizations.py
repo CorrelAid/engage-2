@@ -1,4 +1,6 @@
-from typing import Annotated, Literal, Sequence
+from copy import copy
+from datetime import datetime
+from typing import Annotated, Any, Literal, Sequence
 from uuid import UUID, uuid4
 
 from api.auth.users import current_active_user
@@ -6,7 +8,7 @@ from database.session import get_async_session
 from fastapi import APIRouter, Depends, HTTPException, Path
 from models import Organization, OrganizationContact
 from models.user import User
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from sqlalchemy import delete, insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
@@ -58,6 +60,21 @@ class OrganizationRead(BaseModel):
     legal_form: LEGAL_FORMS = Field(default=...)
     sectors: list[SECTORS] = Field(default=...)
     contacts: list[OrganizationContactRead] = Field(default=[])
+    created_at: datetime = Field(default=...)
+    created_by: str = Field(default=...)
+    updated_at: datetime = Field(default=...)
+    updated_by: str = Field(default=...)
+    archived_at: datetime | None = Field(default=...)
+    archived_by: str | None = Field(default=...)
+
+    @model_validator(mode="before")
+    @classmethod
+    def set_user_names(cls, data: Any) -> Any:
+        data = copy(x=data)
+        data.created_by = data.creator.name
+        data.updated_by = data.updater.name
+        data.archived_by = data.archiver.name if data.archiver else None
+        return data
 
 
 class OrganizationCreate(BaseModel):
@@ -116,6 +133,7 @@ class OrganizationUpdate(BaseModel):
 async def update_organization(
     organization: Annotated[Organization, Depends(get_organization_by_id)],
     updated_organization: OrganizationUpdate,
+    current_active_user: Annotated[User, Depends(current_active_user)],
     db_session: Annotated[AsyncSession, Depends(get_async_session)],
 ) -> Organization:
     for key, value in updated_organization.model_dump(
@@ -123,6 +141,7 @@ async def update_organization(
     ).items():
         if getattr(organization, key) != value:
             setattr(organization, key, value)
+    organization.updated_by = current_active_user.id
     delete_query = delete(table=OrganizationContact).where(
         OrganizationContact.organization_id == organization.id
     )
@@ -136,6 +155,18 @@ async def update_organization(
                 for contact in updated_organization.contacts
             ],
         )
+    return organization
+
+
+@router.patch(path="/{organization_id}/archive", response_model=OrganizationRead)
+async def archive_organization(
+    db_session: Annotated[AsyncSession, Depends(get_async_session)],
+    organization: Annotated[Organization, Depends(get_organization_by_id)],
+    current_active_user: Annotated[User, Depends(current_active_user)],
+) -> Organization:
+    organization.toggle_archive(archived_by=current_active_user.id)
+    await db_session.commit()
+    await db_session.refresh(organization)
     return organization
 
 

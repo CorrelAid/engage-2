@@ -2,7 +2,7 @@
 
 Revision ID: 0001
 Revises:
-Create Date: 2023-07-28 16:14:49.303662
+Create Date: 2023-07-29 10:38:30.091724
 
 """
 import fastapi_users_db_sqlalchemy
@@ -63,6 +63,12 @@ def upgrade() -> None:
             "updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
         ),
         sa.Column("updated_by", sa.Uuid(), nullable=False),
+        sa.Column("archived_at", sa.DateTime(), nullable=True),
+        sa.Column("archived_by", sa.Uuid(), nullable=True),
+        sa.ForeignKeyConstraint(
+            ["archived_by"],
+            ["user.id"],
+        ),
         sa.ForeignKeyConstraint(
             ["created_by"],
             ["user.id"],

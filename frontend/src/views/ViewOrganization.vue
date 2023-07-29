@@ -85,14 +85,42 @@
 
           <div class="mb-8" id="danger-zone">
             <h2 class="mb-1">Danger Zone</h2>
-            <h3 class="mb-1">Archive Organization</h3>
-            <p class="mb-2">
-              You can archive the organization to securely store inactive
-              organizations, keeping your workspace organized while preserving
-              important information for future reference. You can reactivate
-              organizations at any time.
-            </p>
-            <v-btn variant="tonal" color="warning">Archive Organization</v-btn>
+            <div v-if="organization?.archived_at">
+              <h3 class="mb-1">Restore Organization</h3>
+              <p class="mb-2">
+                You can restore the ontology to continue working on it. This
+                will move the ontology back to your workspace.
+              </p>
+              <v-list class="mb-2">
+                <v-list-item class="px-0">
+                  <v-list-item-subtitle> Archived by </v-list-item-subtitle>
+                  <v-list-item-title>
+                    {{ organization.archived_by }}
+                  </v-list-item-title>
+                </v-list-item>
+                <v-list-item class="px-0">
+                  <v-list-item-subtitle> Archived at </v-list-item-subtitle>
+                  <v-list-item-title>
+                    {{ organization.archived_at }}
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </div>
+            <div v-else>
+              <h3 class="mb-1">Archive Organization</h3>
+              <p class="mb-2">
+                You can archive the organization to securely store inactive
+                organizations, keeping your workspace organized while preserving
+                important information for future reference. You can reactivate
+                organizations at any time.
+              </p>
+            </div>
+
+            <view-organization-archive-dialog
+              :organization="organization"
+              @toggled-archive="toggleArchiveOrganization"
+            ></view-organization-archive-dialog>
+
             <h3 class="mb-1 mt-4">Delete Organization</h3>
             <p class="mb-2">
               You can delete the organization. This will permanently remove the
@@ -197,6 +225,7 @@ import {
 import ContactList from "@/components/ContactList.vue";
 import { isEqual as _isEqual } from "lodash-es";
 import ViewOrganizationDeleteDialog from "@/components/ViewOrganizationDeleteDialog.vue";
+import ViewOrganizationArchiveDialog from "@/components/ViewOrganizationArchiveDialog.vue";
 
 const route = useRoute();
 
@@ -278,6 +307,11 @@ const updateOrganization = async () => {
       isUpdateLoading.value = false;
     }, timeout);
   }
+};
+
+const toggleArchiveOrganization = (org: OrganizationRead) => {
+  organization.value = structuredClone(org);
+  updatedOrganization.value = structuredClone(org);
 };
 
 onBeforeMount(async () => {

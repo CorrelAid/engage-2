@@ -107,4 +107,25 @@ export class OrganizationsService {
       },
     });
   }
+
+  /**
+   * Archive Organization
+   * @param organizationId
+   * @returns OrganizationRead Successful Response
+   * @throws ApiError
+   */
+  public archiveOrganization(
+    organizationId: string,
+  ): CancelablePromise<OrganizationRead> {
+    return this.httpRequest.request({
+      method: "PATCH",
+      url: "/organizations/{organization_id}/archive",
+      path: {
+        organization_id: organizationId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
 }
