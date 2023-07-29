@@ -127,14 +127,15 @@ async def update_organization(
         OrganizationContact.organization_id == organization.id
     )
     await db_session.execute(statement=delete_query)
-    insert_query = insert(table=OrganizationContact)
-    await db_session.execute(
-        statement=insert_query,
-        params=[
-            {"organization_id": organization.id, **contact.model_dump()}
-            for contact in updated_organization.contacts
-        ],
-    )
+    if updated_organization.contacts:
+        insert_query = insert(table=OrganizationContact)
+        await db_session.execute(
+            statement=insert_query,
+            params=[
+                {"organization_id": organization.id, **contact.model_dump()}
+                for contact in updated_organization.contacts
+            ],
+        )
     return organization
 
 

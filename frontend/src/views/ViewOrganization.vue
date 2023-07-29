@@ -82,6 +82,28 @@
               ></contact-list>
             </div>
           </div>
+
+          <div class="mb-8" id="danger-zone">
+            <h2 class="mb-1">Danger Zone</h2>
+            <h3 class="mb-1">Archive Organization</h3>
+            <p class="mb-2">
+              You can archive the organization to securely store inactive
+              organizations, keeping your workspace organized while preserving
+              important information for future reference. You can reactivate
+              organizations at any time.
+            </p>
+            <v-btn variant="tonal" color="warning">Archive Organization</v-btn>
+            <h3 class="mb-1 mt-4">Delete Organization</h3>
+            <p class="mb-2">
+              You can delete the organization. This will permanently remove the
+              selected organization from the workspace. Please note that this
+              action cannot be undone, so make sure to back up any important
+              data before proceeding.
+            </p>
+            <view-organization-delete-dialog
+              :organization="organization"
+            ></view-organization-delete-dialog>
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -128,6 +150,12 @@
         prepend-icon="mdi-text-box-outline"
         :active="false"
       ></v-list-item> -->
+      <v-list-item
+        :to="{ hash: '#danger-zone' }"
+        title="Danger Zone"
+        prepend-icon="mdi-skull-crossbones"
+        :active="false"
+      ></v-list-item>
     </v-list>
     <template v-slot:append>
       <v-divider></v-divider>
@@ -168,6 +196,7 @@ import {
 } from "@/services";
 import ContactList from "@/components/ContactList.vue";
 import { isEqual as _isEqual } from "lodash-es";
+import ViewOrganizationDeleteDialog from "@/components/ViewOrganizationDeleteDialog.vue";
 
 const route = useRoute();
 
