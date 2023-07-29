@@ -1,0 +1,40 @@
+name: CI
+on:
+  pull_request:
+    branches:
+      - development
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11.4
+      - name: poetry cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry
+      - name: pre-commit-cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pre-commit
+          key: ${{ runner.os }}-venv-${{ hashFiles('.pre-commit-config.yaml') }}
+      - name: Set up the environment
+        run: |
+          pip install -U pip
+          pip install poetry>=1.1.11
+          cd backend
+          poetry install
+      - name: Run pre-commit hooks
+        run: |
+          cd backend
+          poetry run pre-commit install -c ../.pre-commit-config.yaml
+          cd ..
+          make lint-all
+      - name: Run Tests
+        run: make test-backend

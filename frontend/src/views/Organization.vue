@@ -225,7 +225,7 @@ interface Organization {
   notes: string;
 }
 
-const isLoading = ref(false);
+// const isLoadings = ref(false);
 const organization = ref<Organization>();
 
 const fetchOrganization = async () => {

@@ -24,5 +24,8 @@ migrate:
 stop-test-db:
 	docker compose down
 
-lint-backend:
+lint:
 	cd backend && poetry run pre-commit run -c ../.pre-commit-config.yaml
+
+lint-all:
+	cd backend && poetry run pre-commit run -c ../.pre-commit-config.yaml --all-files
