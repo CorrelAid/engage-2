@@ -32,6 +32,7 @@ const routes = [
   },
 ];
 
+/* eslint-disable no-unused-vars */
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
@@ -44,6 +45,7 @@ const router = createRouter({
     }
   },
 });
+/* eslint-enable no-unused-vars */
 
 router.beforeEach(async (to, from, next) => {
   if (!to.meta.requiresAuth) {

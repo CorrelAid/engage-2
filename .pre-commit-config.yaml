@@ -55,6 +55,7 @@ repos:
         types: [file]
         types_or: [ts, javascript, vue]
         additional_dependencies:
+          - "@typescript-eslint/eslint-plugin@6.2.0"
           - "eslint-plugin-simple-import-sort@8.0.0"
           - "eslint@8.22.0"
           - "eslint-plugin-prettier@5.0.0"
@@ -64,4 +65,5 @@ repos:
         exclude: "^(backend|frontend/node_modules)"
         args:
           - "--fix"
-          - "--ignore-path frontend/.eslintignore"
+          - "--config=frontend/.eslintrc.js"
+          - "--ignore-path=frontend/.eslintignore"
