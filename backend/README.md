@@ -51,3 +51,50 @@ instance. The `POSTGRES_DB` is the name of the database to use.
 To run the backend use
 
     poetry run python src/main.py
+
+## Testing
+
+Currently there are two modes for testing set up.
+1. Testing without a database
+2. Testing with a test database
+
+To test without a database the user can run
+
+    poetry run pytest
+
+or equivalently in the project root
+
+    make test-backend
+
+This will run all the tests that are not related to the database
+and skip the rest.
+
+To test with a testing database a testing database
+a local database instance has to be started and the latest
+migrations have to be applied. Otherwise the database can still be
+empty and the tests will populate it with data as needed.
+One straight forward way to start a database is
+1. Go to project root and start the backend
+
+        make start-test-db
+
+2. In a separate terminal apply the migrations
+
+        make migrate
+
+To run the database tests, the environment variable `ENGAGE_BACKEND_TESTS__TEST_DATABASE`
+must be set to true. Pytest can then either be run directly
+
+    poetry run pytest
+
+or the make command that also sets the mentioned env variable can be used
+
+    make backend-test-w-db
+
+Once the testing is done the database can be stopped with
+
+    docker compose down
+
+or equivalently
+
+    make stop-test-db

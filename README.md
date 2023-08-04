@@ -2,15 +2,17 @@
 
 CorrelAid engage is a tool intended to help with the management of projects that
 are often done with partner organizations. The tools aims to help with the
-organization of the whole project life cycle.  It is currently
+organization of the whole project life cycle. It is currently
 in development and not yet ready for production use.
 
 The main entities in the system tracks are:
+
 - Projects
 - Partner organizations
 - Project members
 
 In addition the tool aims to offer two different levels of access:
+
 - Admins: Can create and edit all entities
 - Team Admins: Can create and edit all entities for their team
 
