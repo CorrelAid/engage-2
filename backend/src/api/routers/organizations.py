@@ -8,7 +8,7 @@ from database.session import get_async_session
 from fastapi import APIRouter, Depends, HTTPException, Path
 from models import Organization, OrganizationContact
 from models.user import User
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, model_validator
 from sqlalchemy import delete, insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
@@ -46,26 +46,26 @@ async def get_organization_by_id(
 class OrganizationContactRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    name: str = Field(default=...)
-    role: str = Field(default=...)
-    email: str = Field(default=...)
-    phone: str = Field(default=...)
+    name: str
+    role: str
+    email: str
+    phone: str
 
 
 class OrganizationRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: UUID = Field(default=...)
-    name: str = Field(default=...)
-    legal_form: LEGAL_FORMS = Field(default=...)
-    sectors: list[SECTORS] = Field(default=...)
-    contacts: list[OrganizationContactRead] = Field(default=[])
-    created_at: datetime = Field(default=...)
-    created_by: str = Field(default=...)
-    updated_at: datetime = Field(default=...)
-    updated_by: str = Field(default=...)
-    archived_at: datetime | None = Field(default=...)
-    archived_by: str | None = Field(default=...)
+    id: UUID
+    name: str
+    legal_form: LEGAL_FORMS
+    sectors: list[SECTORS]
+    contacts: list[OrganizationContactRead]
+    created_at: datetime
+    created_by: str
+    updated_at: datetime
+    updated_by: str
+    archived_at: datetime | None = None
+    archived_by: str | None = None
 
     @model_validator(mode="before")
     @classmethod
@@ -78,10 +78,10 @@ class OrganizationRead(BaseModel):
 
 
 class OrganizationCreate(BaseModel):
-    name: str = Field(default=...)
-    legal_form: LEGAL_FORMS = Field(default=...)
-    sectors: list[SECTORS] = Field(default=...)
-    contacts: list[OrganizationContactRead] = Field(default=[])
+    name: str
+    legal_form: LEGAL_FORMS
+    sectors: list[SECTORS]
+    contacts: list[OrganizationContactRead] = []
 
 
 @router.post(path="", response_model=OrganizationRead)
@@ -123,10 +123,10 @@ async def get_organization(
 
 
 class OrganizationUpdate(BaseModel):
-    name: str = Field(default=...)
-    legal_form: LEGAL_FORMS = Field(default=...)
-    sectors: list[SECTORS] = Field(default=...)
-    contacts: list[OrganizationContactRead] = Field(default=[])
+    name: str
+    legal_form: LEGAL_FORMS
+    sectors: list[SECTORS]
+    contacts: list[OrganizationContactRead] = []
 
 
 @router.patch(path="/{organization_id}", response_model=OrganizationRead)
