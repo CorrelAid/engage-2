@@ -119,9 +119,7 @@ class OrganizationStore:
         )
         return TypeAdapter(list[OrganizationRead]).validate_python(organization_entries)
 
-    async def create(
-        self, organization: OrganizationCreate, creator_id: UUID
-    ) -> OrganizationRead:
+    async def create(self, organization: OrganizationCreate, creator_id: UUID) -> UUID:
         new_organization = Organization(
             id=uuid4(),
             **organization.model_dump(exclude={"contacts"}),
@@ -129,9 +127,11 @@ class OrganizationStore:
                 OrganizationContact(**contact.model_dump())
                 for contact in organization.contacts
             ],
+            created_by=creator_id,
+            updated_by=creator_id,
         )
         self.session.add(new_organization)
-        return TypeAdapter(OrganizationRead).validate_python(new_organization)
+        return new_organization.id
 
     async def delete(self, organization_id: UUID) -> None:
         organization_entry = await self._get_orm_organization(organization_id)
@@ -188,7 +188,10 @@ async def create_organization(
     project_store: Annotated[OrganizationStore, Depends()],
     creator: User = Depends(current_active_user),
 ) -> OrganizationRead:
-    return await project_store.create(organization, creator_id=creator.id)
+    organization_id = await project_store.create(
+        organization=organization, creator_id=creator.id
+    )
+    return await project_store.get(organization_id=organization_id)
 
 
 @router.get(
@@ -226,9 +229,8 @@ async def update_organization(
     project_store: Annotated[OrganizationStore, Depends()],
     updater: User = Depends(current_active_user),
 ) -> OrganizationRead:
-    return await project_store.update(
-        organization_id, organization, updater_id=updater.id
-    )
+    await project_store.update(organization_id, organization, updater_id=updater.id)
+    return await project_store.get(organization_id)
 
 
 @router.patch(
@@ -240,7 +242,8 @@ async def archive_organization(
     project_store: Annotated[OrganizationStore, Depends()],
     archiver: User = Depends(current_active_user),
 ) -> OrganizationRead:
-    return await project_store.archive(organization_id, archiver_id=archiver.id)
+    await project_store.archive(organization_id, archiver_id=archiver.id)
+    return await project_store.get(organization_id)
 
 
 @router.patch(
@@ -251,4 +254,5 @@ async def unarchive_organization(
     organization_id: Annotated[UUID, Path(...)],
     project_store: Annotated[OrganizationStore, Depends()],
 ) -> OrganizationRead:
-    return await project_store.unarchive(organization_id)
+    await project_store.unarchive(organization_id)
+    return await project_store.get(organization_id)

@@ -30,7 +30,11 @@
         <v-btn
           variant="elevated"
           color="warning"
-          @click="toggleArchiveOrganization"
+          @click="
+            organization.archived_at
+              ? restoreOrganization()
+              : archiveOrganization()
+          "
         >
           {{ organization.archived_at ? "Restore" : "Archive" }} Organization
         </v-btn>
@@ -54,7 +58,15 @@ const emit = defineEmits<{
 
 const isDialogVisible = ref(false);
 
-const toggleArchiveOrganization = async () => {
+const restoreOrganization = async () => {
+  const response = await apiClient.organizations.unarchiveOrganization(
+    props.organization.id,
+  );
+  emit("toggledArchive", response);
+  isDialogVisible.value = false;
+};
+
+const archiveOrganization = async () => {
   const response = await apiClient.organizations.archiveOrganization(
     props.organization.id,
   );
