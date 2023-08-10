@@ -4,7 +4,7 @@ from typing import Annotated, Any, Literal
 from uuid import UUID, uuid4
 
 from api.auth.users import current_active_user
-from database.session import get_async_session, transactional_session
+from database.session import transactional_session
 from fastapi import APIRouter, Body, Depends, HTTPException, Path
 from models import Organization, OrganizationContact
 from models.user import User
@@ -33,12 +33,17 @@ SECTOR = Literal[
     "Umwelt",
 ]
 
+ORGANIZATION_CONTACT_ROLE = Literal[
+    "Organization Contact",
+    "Project Contact",
+]
+
 
 class OrganizationContactRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: str
-    role: str
+    role: ORGANIZATION_CONTACT_ROLE
     email: str
     phone: str
 
@@ -75,11 +80,18 @@ class OrganizationCreate(BaseModel):
     contacts: list[OrganizationContactRead] = []
 
 
-class OrganizationUpdate(BaseModel):
+class OrganizationContactUpdate(BaseModel):
     name: str
-    legal_form: LEGAL_FORM
-    sectors: list[SECTOR]
-    contacts: list[OrganizationContactRead] = []
+    role: ORGANIZATION_CONTACT_ROLE
+    email: str
+    phone: str
+
+
+class OrganizationUpdate(BaseModel):
+    name: str | None = None
+    legal_form: LEGAL_FORM | None = None
+    sectors: list[SECTOR] | None = None
+    contacts: list[OrganizationContactRead] | None = None
 
 
 class OrganizationStore:
@@ -173,7 +185,7 @@ async def list_organizations(
 )
 async def create_organization(
     organization: Annotated[OrganizationCreate, Body(...)],
-    project_store: Annotated[OrganizationStore, Depends(get_async_session)],
+    project_store: Annotated[OrganizationStore, Depends()],
     creator: User = Depends(current_active_user),
 ) -> OrganizationRead:
     return await project_store.create(organization, creator_id=creator.id)
@@ -199,7 +211,7 @@ async def get_organization(
 )
 async def delete_organization(
     organization_id: Annotated[UUID, Path(...)],
-    project_store: Annotated[OrganizationStore, Depends(get_async_session)],
+    project_store: Annotated[OrganizationStore, Depends()],
 ) -> None:
     return await project_store.delete(organization_id)
 
@@ -211,7 +223,7 @@ async def delete_organization(
 async def update_organization(
     organization_id: Annotated[UUID, Path(...)],
     organization: Annotated[OrganizationUpdate, Body(...)],
-    project_store: Annotated[OrganizationStore, Depends(get_async_session)],
+    project_store: Annotated[OrganizationStore, Depends()],
     updater: User = Depends(current_active_user),
 ) -> OrganizationRead:
     return await project_store.update(
@@ -225,7 +237,7 @@ async def update_organization(
 )
 async def archive_organization(
     organization_id: Annotated[UUID, Path(...)],
-    project_store: Annotated[OrganizationStore, Depends(get_async_session)],
+    project_store: Annotated[OrganizationStore, Depends()],
     archiver: User = Depends(current_active_user),
 ) -> OrganizationRead:
     return await project_store.archive(organization_id, archiver_id=archiver.id)
@@ -237,6 +249,6 @@ async def archive_organization(
 )
 async def unarchive_organization(
     organization_id: Annotated[UUID, Path(...)],
-    project_store: Annotated[OrganizationStore, Depends(get_async_session)],
+    project_store: Annotated[OrganizationStore, Depends()],
 ) -> OrganizationRead:
     return await project_store.unarchive(organization_id)
