@@ -32,7 +32,7 @@
           ></v-select>
           <v-text-field
             v-model="email"
-            :rules="[isValueValid]"
+            :rules="[isValueValid, isEmailValid]"
             label="Email"
           ></v-text-field>
           <v-text-field
@@ -80,6 +80,8 @@ const email = ref("");
 const phone = ref("");
 const isValueValid = (value: string) =>
   (!!value && value.length > 0) || "Please provide a value.";
+const isEmailValid = (value: string) =>
+  /.+@.+\..+/.test(value) || "Please provide a valid email.";
 
 const cancel = () => {
   form.value.reset();
