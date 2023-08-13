@@ -14,7 +14,7 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-router = APIRouter(prefix="/organizations", tags=["organizations"])
+router = APIRouter()
 
 LEGAL_FORM = Literal[
     "e.V. - Eingetragener Verein",

@@ -20,5 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(router=auth.router)
-app.include_router(router=organizations.router)
+app.include_router(
+    router=organizations.router, prefix="/organizations", tags=["organizations"]
+)
 app.include_router(router=projects.router, prefix="/projects", tags=["projects"])
