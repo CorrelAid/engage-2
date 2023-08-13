@@ -3,27 +3,9 @@ from uuid import UUID
 
 from models.base import Base
 from models.user import User
-from sqlalchemy import DateTime, ForeignKey, String, Uuid, func
+from sqlalchemy import JSON, DateTime, ForeignKey, String, Uuid, func
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-
-class OrganizationContact(Base):
-    __tablename__ = "organization_contacts"
-
-    organization_id: Mapped[UUID] = mapped_column(
-        Uuid,
-        ForeignKey("organizations.id"),
-        primary_key=True,
-    )
-    name: Mapped[str] = mapped_column(String(length=255), primary_key=True)
-    role: Mapped[str] = mapped_column(String(length=255), nullable=False)
-    email: Mapped[str] = mapped_column(String(length=255), nullable=False)
-    phone: Mapped[str] = mapped_column(String(length=255), nullable=False)
-
-    organization: Mapped["Organization"] = relationship(
-        "Organization", back_populates="contacts"
-    )
 
 
 class Organization(Base):
@@ -36,6 +18,9 @@ class Organization(Base):
         nullable=False,
     )
     sectors: Mapped[list[str]] = mapped_column(postgresql.ARRAY(String(length=120)))
+    contacts: Mapped[list[dict]] = mapped_column(
+        JSON, nullable=False, server_default="[]"
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
@@ -68,12 +53,6 @@ class Organization(Base):
         server_default=None,
     )
 
-    contacts: Mapped[list["OrganizationContact"]] = relationship(
-        "OrganizationContact",
-        lazy="selectin",
-        cascade="all,delete",
-        back_populates="organization",
-    )
     creator: Mapped[User] = relationship(
         "User", foreign_keys=[created_by], lazy="joined", uselist=False
     )
@@ -83,11 +62,3 @@ class Organization(Base):
     archiver: Mapped[User] = relationship(
         "User", foreign_keys=[archived_by], lazy="joined", uselist=False
     )
-
-    def toggle_archive(self, archived_by: UUID) -> None:
-        if self.archived_at is None:
-            self.archived_at = datetime.utcnow()
-            self.archived_by = archived_by
-        else:
-            self.archived_at = None
-            self.archived_by = None

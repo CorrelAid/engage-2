@@ -6,9 +6,9 @@ from uuid import UUID, uuid4
 from api.auth.users import current_active_user
 from database.session import transactional_session
 from fastapi import APIRouter, Body, Depends, HTTPException, Path
-from models import Organization, OrganizationContact
+from models import Organization
 from models.user import User
-from pydantic import BaseModel, ConfigDict, TypeAdapter, model_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, TypeAdapter, model_validator
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -44,7 +44,7 @@ class OrganizationContactRead(BaseModel):
 
     name: str
     role: ORGANIZATION_CONTACT_ROLE
-    email: str
+    email: EmailStr
     phone: str
 
 
@@ -83,7 +83,7 @@ class OrganizationCreate(BaseModel):
 class OrganizationContactUpdate(BaseModel):
     name: str
     role: ORGANIZATION_CONTACT_ROLE
-    email: str
+    email: EmailStr
     phone: str
 
 
@@ -123,10 +123,7 @@ class OrganizationStore:
         new_organization = Organization(
             id=uuid4(),
             **organization.model_dump(exclude={"contacts"}),
-            contacts=[
-                OrganizationContact(**contact.model_dump())
-                for contact in organization.contacts
-            ],
+            contacts=[contact.model_dump() for contact in organization.contacts],
             created_by=creator_id,
             updated_by=creator_id,
         )
