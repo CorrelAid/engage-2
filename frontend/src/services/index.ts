@@ -10,16 +10,19 @@ export { OpenAPI } from "./core/OpenAPI";
 export type { OpenAPIConfig } from "./core/OpenAPI";
 
 export type { Body_auth } from "./models/Body_auth";
+export type { CreateProject } from "./models/CreateProject";
 export type { ErrorModel } from "./models/ErrorModel";
 export type { HTTPValidationError } from "./models/HTTPValidationError";
-export type { OrganizationContactRead } from "./models/OrganizationContactRead";
+export { OrganizationContactRead } from "./models/OrganizationContactRead";
 export { OrganizationCreate } from "./models/OrganizationCreate";
 export { OrganizationRead } from "./models/OrganizationRead";
-export { OrganizationUpdate } from "./models/OrganizationUpdate";
+export type { OrganizationUpdate } from "./models/OrganizationUpdate";
 export type { pydantic__main__Body_reset__1 } from "./models/pydantic__main__Body_reset__1";
 export type { pydantic__main__Body_reset__2 } from "./models/pydantic__main__Body_reset__2";
 export type { pydantic__main__Body_verify__1 } from "./models/pydantic__main__Body_verify__1";
 export type { pydantic__main__Body_verify__2 } from "./models/pydantic__main__Body_verify__2";
+export type { ReadProject } from "./models/ReadProject";
+export type { UpdateProject } from "./models/UpdateProject";
 export type { UserCreate } from "./models/UserCreate";
 export type { UserRead } from "./models/UserRead";
 export type { UserUpdate } from "./models/UserUpdate";
@@ -27,3 +30,4 @@ export type { ValidationError } from "./models/ValidationError";
 
 export { AuthService } from "./services/AuthService";
 export { OrganizationsService } from "./services/OrganizationsService";
+export { ProjectsService } from "./services/ProjectsService";

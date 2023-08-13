@@ -9,13 +9,13 @@ export type OrganizationRead = {
   name: string;
   legal_form: OrganizationRead.legal_form;
   sectors: Array<"Bildung" | "Gesundheit" | "Kultur" | "Sport" | "Umwelt">;
-  contacts?: Array<OrganizationContactRead>;
+  contacts: Array<OrganizationContactRead>;
   created_at: string;
   created_by: string;
   updated_at: string;
   updated_by: string;
-  archived_at: string | null;
-  archived_by: string | null;
+  archived_at?: string | null;
+  archived_by?: string | null;
 };
 
 export namespace OrganizationRead {

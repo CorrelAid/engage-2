@@ -13,20 +13,20 @@ export class OrganizationsService {
 
   /**
    * List Organizations
-   * @returns OrganizationRead Successful Response
+   * @returns OrganizationRead List of organizations
    * @throws ApiError
    */
   public listOrganizations(): CancelablePromise<Array<OrganizationRead>> {
     return this.httpRequest.request({
       method: "GET",
-      url: "/organizations",
+      url: "/organizations/",
     });
   }
 
   /**
    * Create Organization
    * @param requestBody
-   * @returns OrganizationRead Successful Response
+   * @returns OrganizationRead Create a new organization
    * @throws ApiError
    */
   public createOrganization(
@@ -34,7 +34,7 @@ export class OrganizationsService {
   ): CancelablePromise<OrganizationRead> {
     return this.httpRequest.request({
       method: "POST",
-      url: "/organizations",
+      url: "/organizations/",
       body: requestBody,
       mediaType: "application/json",
       errors: {
@@ -46,7 +46,7 @@ export class OrganizationsService {
   /**
    * Get Organization
    * @param organizationId
-   * @returns OrganizationRead Successful Response
+   * @returns OrganizationRead Get a single organization
    * @throws ApiError
    */
   public getOrganization(
@@ -58,31 +58,6 @@ export class OrganizationsService {
       path: {
         organization_id: organizationId,
       },
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-
-  /**
-   * Update Organization
-   * @param organizationId
-   * @param requestBody
-   * @returns OrganizationRead Successful Response
-   * @throws ApiError
-   */
-  public updateOrganization(
-    organizationId: string,
-    requestBody: OrganizationUpdate,
-  ): CancelablePromise<OrganizationRead> {
-    return this.httpRequest.request({
-      method: "PATCH",
-      url: "/organizations/{organization_id}",
-      path: {
-        organization_id: organizationId,
-      },
-      body: requestBody,
-      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -109,9 +84,34 @@ export class OrganizationsService {
   }
 
   /**
+   * Update Organization
+   * @param organizationId
+   * @param requestBody
+   * @returns OrganizationRead Update a single organization
+   * @throws ApiError
+   */
+  public updateOrganization(
+    organizationId: string,
+    requestBody: OrganizationUpdate,
+  ): CancelablePromise<OrganizationRead> {
+    return this.httpRequest.request({
+      method: "PATCH",
+      url: "/organizations/{organization_id}",
+      path: {
+        organization_id: organizationId,
+      },
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
    * Archive Organization
    * @param organizationId
-   * @returns OrganizationRead Successful Response
+   * @returns OrganizationRead Archive a single organization
    * @throws ApiError
    */
   public archiveOrganization(
@@ -120,6 +120,27 @@ export class OrganizationsService {
     return this.httpRequest.request({
       method: "PATCH",
       url: "/organizations/{organization_id}/archive",
+      path: {
+        organization_id: organizationId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Unarchive Organization
+   * @param organizationId
+   * @returns OrganizationRead Unarchive a single organization
+   * @throws ApiError
+   */
+  public unarchiveOrganization(
+    organizationId: string,
+  ): CancelablePromise<OrganizationRead> {
+    return this.httpRequest.request({
+      method: "PATCH",
+      url: "/organizations/{organization_id}/unarchive",
       path: {
         organization_id: organizationId,
       },

@@ -7,12 +7,14 @@ import { AxiosHttpRequest } from "./core/AxiosHttpRequest";
 
 import { AuthService } from "./services/AuthService";
 import { OrganizationsService } from "./services/OrganizationsService";
+import { ProjectsService } from "./services/ProjectsService";
 
 type HttpRequestConstructor = new (config: OpenAPIConfig) => BaseHttpRequest;
 
 export class AppClient {
   public readonly auth: AuthService;
   public readonly organizations: OrganizationsService;
+  public readonly projects: ProjectsService;
 
   public readonly request: BaseHttpRequest;
 
@@ -34,5 +36,6 @@ export class AppClient {
 
     this.auth = new AuthService(this.request);
     this.organizations = new OrganizationsService(this.request);
+    this.projects = new ProjectsService(this.request);
   }
 }
