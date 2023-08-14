@@ -40,6 +40,7 @@ repos:
           - "sqlalchemy"
           - "pytest"
           - "fastapi"
+          - "types-requests"
         entry: "mypy --config-file backend/pyproject.toml"
         exclude: ^backend/src/database/migrations/
   - repo: https://github.com/pre-commit/mirrors-prettier
