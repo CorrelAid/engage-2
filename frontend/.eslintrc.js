@@ -5,9 +5,9 @@ module.exports = {
   },
   extends: [
     "plugin:vue/vue3-essential",
-    "plugin:prettier/recommended",
     "eslint:recommended",
     "@vue/eslint-config-typescript",
+    "plugin:prettier/recommended",
   ],
   rules: {
     "vue/multi-word-component-names": "off",
