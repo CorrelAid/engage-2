@@ -28,12 +28,12 @@
             :key="organization.id"
             :title="organization.name"
           >
-            <template v-slot:prepend>
+            <template #prepend>
               <v-avatar rounded="lg" color="secondary">
                 <strong>{{ organization.name.charAt(0).toUpperCase() }}</strong>
               </v-avatar>
             </template>
-            <template v-slot:append>
+            <template #append>
               <v-btn
                 variant="tonal"
                 color="secondary"

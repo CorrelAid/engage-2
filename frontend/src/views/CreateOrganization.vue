@@ -88,7 +88,6 @@ import {
   ApiError,
 } from "@/services";
 import ContactList from "@/components/ContactList.vue";
-import { AxiosError } from "axios";
 
 const router = useRouter();
 

@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="isDialogVisible" width="500px">
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-btn v-bind="props" variant="tonal" color="error">
         Delete Organization
       </v-btn>
@@ -20,9 +20,9 @@
           }}'. Please note that this action cannot be undone.
         </p>
         <v-form
-          v-model="isFormValid"
-          ref="form"
           id="delete-organization-form"
+          ref="form"
+          v-model="isFormValid"
           @submit.prevent="deleteOrganization"
         >
           <v-text-field

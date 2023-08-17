@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="isDialogVisible" width="500px">
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-btn v-bind="props" variant="tonal" color="warning">
         {{ organization.archived_at ? "Restore" : "Archive" }} Organization
       </v-btn>
@@ -53,6 +53,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  // eslint-disable-next-line no-unused-vars
   (e: "toggledArchive", organization: OrganizationRead): void;
 }>();
 

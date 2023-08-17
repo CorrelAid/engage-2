@@ -10,19 +10,19 @@
       lines="three"
       class="px-0"
     >
-      <template v-slot:prepend>
+      <template #prepend>
         <v-avatar rounded="lg" color="secondary">
           <strong>
             {{ contact.name.charAt(0).toUpperCase() }}
           </strong>
         </v-avatar>
       </template>
-      <template v-slot:subtitle>
+      <template #subtitle>
         {{ contact.email }}
         <br />
         {{ contact.phone }}
       </template>
-      <template v-slot:append>
+      <template #append>
         <v-btn
           variant="text"
           color="error"
@@ -39,12 +39,15 @@
 import { OrganizationContactRead } from "@/services";
 import ContactListCreateDialog from "./ContactListCreateDialog.vue";
 
-const props = defineProps<{
+defineProps<{
+  // eslint-disable-next-line no-unused-vars
   contacts: OrganizationContactRead[];
 }>();
 
 const emit = defineEmits<{
+  // eslint-disable-next-line no-unused-vars
   (e: "addContact", contact: OrganizationContactRead): void;
+  // eslint-disable-next-line no-unused-vars
   (e: "deleteContact", contact: OrganizationContactRead): void;
 }>();
 </script>

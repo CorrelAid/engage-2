@@ -6,7 +6,7 @@
   >
     <v-list v-if="authStore.user">
       <v-list-item :title="authStore.user.name" subtitle="Administrator">
-        <template v-slot:prepend>
+        <template #prepend>
           <v-avatar
             :size="isRail ? 24 : undefined"
             :rounded="isRail || 'lg'"
@@ -44,7 +44,7 @@
     </v-list>
     <v-divider></v-divider>
 
-    <template v-slot:append>
+    <template #append>
       <v-divider></v-divider>
       <v-list density="compact" nav>
         <v-list-item

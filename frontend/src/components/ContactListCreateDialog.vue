@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="isDialogVisible" width="500px">
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-btn v-bind="props" variant="tonal" size="small" color="secondary">
         <v-icon class="mr-1">mdi-plus</v-icon>
         Add Contact
@@ -14,9 +14,9 @@
       <v-divider></v-divider>
       <v-card-text>
         <v-form
-          v-model="isFormValid"
-          ref="form"
           id="add-contact-form"
+          ref="form"
+          v-model="isFormValid"
           @submit.prevent="addContact"
         >
           <v-text-field
@@ -65,6 +65,7 @@ import { OrganizationContactRead } from "@/services";
 import { ref } from "vue";
 
 const emit = defineEmits<{
+  // eslint-disable-next-line no-unused-vars
   (e: "addContact", contact: OrganizationContactRead): void;
 }>();
 

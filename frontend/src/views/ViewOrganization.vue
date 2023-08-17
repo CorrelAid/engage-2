@@ -27,7 +27,7 @@
             </v-icon>
           </div>
 
-          <div class="mb-8" id="details">
+          <div id="details" class="mb-8">
             <h2 class="mb-1">Details</h2>
 
             <h3 class="mb-1">Legal Form</h3>
@@ -54,7 +54,7 @@
             ></v-select>
           </div>
 
-          <div class="mb-8" id="contacts">
+          <div id="contacts" class="mb-8">
             <h2 class="mb-1">Contacts</h2>
             <p class="mb-1">
               An organization contact and a project contact both refer to
@@ -83,7 +83,7 @@
             </div>
           </div>
 
-          <div class="mb-8" id="danger-zone">
+          <div id="danger-zone" class="mb-8">
             <h2 class="mb-1">Danger Zone</h2>
             <div v-if="organization?.archived_at">
               <h3 class="mb-1">Restore Organization</h3>
@@ -139,7 +139,7 @@
   <v-navigation-drawer :rail="isRail" location="right" permanent>
     <v-list>
       <v-list-item :title="organization?.name" subtitle="Organization">
-        <template v-slot:prepend>
+        <template #prepend>
           <v-avatar
             :size="isRail ? 24 : undefined"
             :rounded="isRail || 'lg'"
@@ -226,7 +226,7 @@
         :active="false"
       ></v-list-item>
     </v-list>
-    <template v-slot:append>
+    <template #append>
       <v-divider></v-divider>
       <div class="pa-2">
         <v-btn
