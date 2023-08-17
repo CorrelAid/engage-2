@@ -1,11 +1,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Body_auth_token_db_login_auth_login_post } from "../models/Body_auth_token_db_login_auth_login_post";
-import type { Body_reset_forgot_password_auth_forgot_password_post } from "../models/Body_reset_forgot_password_auth_forgot_password_post";
-import type { Body_reset_reset_password_auth_reset_password_post } from "../models/Body_reset_reset_password_auth_reset_password_post";
-import type { Body_verify_request_token_auth_request_verify_token_post } from "../models/Body_verify_request_token_auth_request_verify_token_post";
-import type { Body_verify_verify_auth_verify_post } from "../models/Body_verify_verify_auth_verify_post";
+import type { Body_auth } from "../models/Body_auth";
+import type { pydantic__main__Body_reset__1 } from "../models/pydantic__main__Body_reset__1";
+import type { pydantic__main__Body_reset__2 } from "../models/pydantic__main__Body_reset__2";
+import type { pydantic__main__Body_verify__1 } from "../models/pydantic__main__Body_verify__1";
+import type { pydantic__main__Body_verify__2 } from "../models/pydantic__main__Body_verify__2";
 import type { UserCreate } from "../models/UserCreate";
 import type { UserRead } from "../models/UserRead";
 import type { UserUpdate } from "../models/UserUpdate";
@@ -22,9 +22,7 @@ export class AuthService {
    * @returns any Successful Response
    * @throws ApiError
    */
-  public authTokenDbLoginAuthLoginPost(
-    formData: Body_auth_token_db_login_auth_login_post,
-  ): CancelablePromise<any> {
+  public authTokenDbLogin(formData: Body_auth): CancelablePromise<any> {
     return this.httpRequest.request({
       method: "POST",
       url: "/auth/login",
@@ -42,7 +40,7 @@ export class AuthService {
    * @returns any Successful Response
    * @throws ApiError
    */
-  public authTokenDbLogoutAuthLogoutPost(): CancelablePromise<any> {
+  public authTokenDbLogout(): CancelablePromise<any> {
     return this.httpRequest.request({
       method: "POST",
       url: "/auth/logout",
@@ -58,8 +56,8 @@ export class AuthService {
    * @returns any Successful Response
    * @throws ApiError
    */
-  public resetForgotPasswordAuthForgotPasswordPost(
-    requestBody: Body_reset_forgot_password_auth_forgot_password_post,
+  public resetForgotPassword(
+    requestBody: pydantic__main__Body_reset__1,
   ): CancelablePromise<any> {
     return this.httpRequest.request({
       method: "POST",
@@ -78,8 +76,8 @@ export class AuthService {
    * @returns any Successful Response
    * @throws ApiError
    */
-  public resetResetPasswordAuthResetPasswordPost(
-    requestBody: Body_reset_reset_password_auth_reset_password_post,
+  public resetResetPassword(
+    requestBody: pydantic__main__Body_reset__2,
   ): CancelablePromise<any> {
     return this.httpRequest.request({
       method: "POST",
@@ -99,7 +97,7 @@ export class AuthService {
    * @returns UserRead Successful Response
    * @throws ApiError
    */
-  public registerRegisterAuthRegisterPost(
+  public registerRegister(
     requestBody: UserCreate,
   ): CancelablePromise<UserRead> {
     return this.httpRequest.request({
@@ -120,8 +118,8 @@ export class AuthService {
    * @returns any Successful Response
    * @throws ApiError
    */
-  public verifyRequestTokenAuthRequestVerifyTokenPost(
-    requestBody: Body_verify_request_token_auth_request_verify_token_post,
+  public verifyRequestToken(
+    requestBody: pydantic__main__Body_verify__1,
   ): CancelablePromise<any> {
     return this.httpRequest.request({
       method: "POST",
@@ -140,8 +138,8 @@ export class AuthService {
    * @returns UserRead Successful Response
    * @throws ApiError
    */
-  public verifyVerifyAuthVerifyPost(
-    requestBody: Body_verify_verify_auth_verify_post,
+  public verifyVerify(
+    requestBody: pydantic__main__Body_verify__2,
   ): CancelablePromise<UserRead> {
     return this.httpRequest.request({
       method: "POST",
@@ -160,7 +158,7 @@ export class AuthService {
    * @returns UserRead Successful Response
    * @throws ApiError
    */
-  public usersCurrentUserAuthMeGet(): CancelablePromise<UserRead> {
+  public usersCurrentUser(): CancelablePromise<UserRead> {
     return this.httpRequest.request({
       method: "GET",
       url: "/auth/me",
@@ -176,7 +174,7 @@ export class AuthService {
    * @returns UserRead Successful Response
    * @throws ApiError
    */
-  public usersPatchCurrentUserAuthMePatch(
+  public usersPatchCurrentUser(
     requestBody: UserUpdate,
   ): CancelablePromise<UserRead> {
     return this.httpRequest.request({
@@ -198,7 +196,7 @@ export class AuthService {
    * @returns UserRead Successful Response
    * @throws ApiError
    */
-  public usersUserAuthIdGet(id: string): CancelablePromise<UserRead> {
+  public usersUser(id: string): CancelablePromise<UserRead> {
     return this.httpRequest.request({
       method: "GET",
       url: "/auth/{id}",
@@ -221,7 +219,7 @@ export class AuthService {
    * @returns UserRead Successful Response
    * @throws ApiError
    */
-  public usersPatchUserAuthIdPatch(
+  public usersPatchUser(
     id: string,
     requestBody: UserUpdate,
   ): CancelablePromise<UserRead> {
@@ -249,7 +247,7 @@ export class AuthService {
    * @returns void
    * @throws ApiError
    */
-  public usersDeleteUserAuthIdDelete(id: string): CancelablePromise<void> {
+  public usersDeleteUser(id: string): CancelablePromise<void> {
     return this.httpRequest.request({
       method: "DELETE",
       url: "/auth/{id}",

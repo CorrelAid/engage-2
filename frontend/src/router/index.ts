@@ -6,6 +6,7 @@ const routes = [
     name: "LandingPage",
     path: "/",
     component: () => import("@/views/Home.vue"),
+    meta: { requiresAuth: true },
   },
   {
     name: "Login",
@@ -19,15 +20,21 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    name: "Organizations",
+    name: "ListOrganizations",
     path: "/organizations",
-    component: () => import("@/views/Organizations.vue"),
+    component: () => import("@/views/ListOrganizations.vue"),
     meta: { requiresAuth: true },
   },
   {
-    name: "Organization",
+    name: "CreateOrganization",
+    path: "/organizations/create",
+    component: () => import("@/views/CreateOrganization.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    name: "ViewOrganization",
     path: "/organizations/:organizationId",
-    component: () => import("@/views/Organization.vue"),
+    component: () => import("@/views/ViewOrganization.vue"),
     meta: { requiresAuth: true },
   },
 ];
@@ -36,7 +43,7 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior(to) {
     if (to.hash) {
       return {
         el: to.hash,
@@ -52,12 +59,10 @@ router.beforeEach(async (to, from, next) => {
     return next();
   }
   const authStore = useAuthStore();
-
   await authStore.refresh();
   if (!authStore.isAuthenticated) {
     return next({ name: "Login" });
   }
-
   return next();
 });
 

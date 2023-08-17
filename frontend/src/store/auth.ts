@@ -10,7 +10,7 @@ export const useAuthStore = defineStore("app", () => {
   const isAuthenticated = computed<boolean>(() => !!user.value);
 
   const login = async (email: string, password: string): Promise<void> => {
-    await apiClient.auth.authTokenDbLoginAuthLoginPost({
+    await apiClient.auth.authTokenDbLogin({
       username: email,
       password: password,
     });
@@ -22,13 +22,13 @@ export const useAuthStore = defineStore("app", () => {
   };
 
   const logout = async (): Promise<void> => {
-    await apiClient.auth.authTokenDbLogoutAuthLogoutPost();
+    await apiClient.auth.authTokenDbLogout();
     user.value = null;
   };
 
   const fetchUser = async (): Promise<UserRead | null> => {
     try {
-      const response = await apiClient.auth.usersCurrentUserAuthMeGet();
+      const response = await apiClient.auth.usersCurrentUser();
       return response;
     } catch (error) {
       return null;

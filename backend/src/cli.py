@@ -35,6 +35,7 @@ async def adduser(args: argparse.Namespace):
                             email=args.email,
                             password=args.password,
                             is_superuser=args.is_superuser,
+                            roles=[],
                         )
                     )
                     logging.info(f"User created {user}")

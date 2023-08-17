@@ -3,8 +3,12 @@
     <v-row class="justify-center">
       <v-col cols="12" md="10" lg="8">
         <v-breadcrumbs :items="breadcrumbs" class="px-0"></v-breadcrumbs>
-        <h1 class="mb-5">Organizations</h1>
-        <v-btn color="secondary">Add Organization</v-btn>
+        <div class="d-flex align-center justify-space-between mb-5">
+          <h1>Organizations</h1>
+          <v-btn :to="{ name: 'CreateOrganization' }" color="secondary">
+            Add Organization
+          </v-btn>
+        </div>
         <v-text-field
           v-model="search"
           prepend-inner-icon="mdi-magnify"
@@ -14,18 +18,22 @@
           clearable
           hide-details
         ></v-text-field>
-        <v-list density="comfortable">
+        <v-skeleton-loader
+          v-if="isLoading"
+          type="list-item, list-item, list-item"
+        ></v-skeleton-loader>
+        <v-list v-else density="comfortable">
           <v-list-item
             v-for="organization in filteredOrganizations"
             :key="organization.id"
             :title="organization.name"
           >
-            <template v-slot:prepend>
+            <template #prepend>
               <v-avatar rounded="lg" color="secondary">
                 <strong>{{ organization.name.charAt(0).toUpperCase() }}</strong>
               </v-avatar>
             </template>
-            <template v-slot:append>
+            <template #append>
               <v-btn
                 variant="tonal"
                 color="secondary"
@@ -33,7 +41,7 @@
                 size="small"
                 icon="mdi-arrow-right"
                 :to="{
-                  name: 'Organization',
+                  name: 'ViewOrganization',
                   params: { organizationId: organization.id },
                 }"
               >
@@ -47,8 +55,11 @@
 </template>
 
 <script setup lang="ts">
+import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 import { computed, ref } from "vue";
-import { sampleOrganizationsArray } from "@/mockData";
+import { OrganizationRead } from "@/services";
+import { apiClient } from "@/plugins/api";
+import { onBeforeMount } from "vue";
 
 interface Organization {
   id: string;
@@ -56,10 +67,26 @@ interface Organization {
 }
 
 const breadcrumbs = [
-  { title: "Organizations", to: { name: "Organizations" }, disabled: true },
+  { title: "Organizations", to: { name: "ListOrganizations" }, disabled: true },
 ];
 
-const organizations = ref<Organization[]>(sampleOrganizationsArray);
+const isLoading = ref(false);
+
+const organizations = ref<OrganizationRead[]>([]);
+
+const fetchOrganizations = async () => {
+  isLoading.value = true;
+  const startTime = new Date();
+  try {
+    organizations.value = await apiClient.organizations.listOrganizations();
+  } finally {
+    const duration = new Date().getTime() - startTime.getTime();
+    const timeout = duration >= 300 ? 0 : 300 - duration;
+    setTimeout(() => {
+      isLoading.value = false;
+    }, timeout);
+  }
+};
 
 const search = ref<string>();
 
@@ -70,4 +97,8 @@ const filteredOrganizations = computed<Organization[]>(() =>
       organization.name.toLowerCase().includes(search.value?.toLowerCase()),
   ),
 );
+
+onBeforeMount(async () => {
+  await fetchOrganizations();
+});
 </script>

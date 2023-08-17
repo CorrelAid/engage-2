@@ -4,15 +4,15 @@
     :rail="isRail"
     permanent
   >
-    <v-list>
-      <v-list-item :title="adminUser.name" subtitle="Administrator">
-        <template v-slot:prepend>
+    <v-list v-if="authStore.user">
+      <v-list-item :title="authStore.user.name" subtitle="Administrator">
+        <template #prepend>
           <v-avatar
             :size="isRail ? 24 : undefined"
             :rounded="isRail || 'lg'"
             color="primary"
           >
-            <strong class="text-white">{{ adminUser.initials }}</strong>
+            <strong class="text-white">{{ authStore.user.name.at(0) }}</strong>
           </v-avatar>
         </template>
       </v-list-item>
@@ -37,14 +37,14 @@
         title="Projects"
       ></v-list-item>
       <v-list-item
-        :to="{ name: 'Organizations' }"
+        :to="{ name: 'ListOrganizations' }"
         prepend-icon="mdi-domain"
         title="Organizations"
       ></v-list-item>
     </v-list>
     <v-divider></v-divider>
 
-    <template v-slot:append>
+    <template #append>
       <v-divider></v-divider>
       <v-list density="compact" nav>
         <v-list-item
@@ -67,7 +67,6 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { adminUser } from "@/mockData";
 import { useAuthStore } from "@/store/auth";
 import { useRouter } from "vue-router";
 

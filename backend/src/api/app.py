@@ -1,13 +1,15 @@
-from typing import Annotated
-
-from api.auth.users import current_active_user
-from api.routers import auth, projects
-from fastapi import Depends, FastAPI
+from api.routers import auth, organizations, projects
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from models.user import User
+from fastapi.routing import APIRoute
 from settings import settings
 
-app = FastAPI()
+
+def custom_generate_unique_id(route: APIRoute):
+    return route.name
+
+
+app = FastAPI(generate_unique_id_function=custom_generate_unique_id)
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,9 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(router=auth.router)
+app.include_router(
+    router=organizations.router, prefix="/organizations", tags=["organizations"]
+)
 app.include_router(router=projects.router, prefix="/projects", tags=["projects"])
-
-
-@app.get("/authenticated-route")
-async def authenticated_route(user: Annotated[User, Depends(current_active_user)]):
-    return {"message": f"Hello {user.email}!"}
