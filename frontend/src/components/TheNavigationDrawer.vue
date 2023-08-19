@@ -20,7 +20,7 @@
     <v-divider></v-divider>
     <v-list density="compact" nav>
       <v-list-item
-        :to="{ name: 'LandingPage' }"
+        :to="{ name: 'Dashboard' }"
         prepend-icon="mdi-home"
         title="Dashboard"
       ></v-list-item>
