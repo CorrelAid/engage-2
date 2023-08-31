@@ -35,6 +35,24 @@ const routes = [
     component: () => import("@/views/ViewOrganization.vue"),
     meta: { requiresAuth: true },
   },
+  {
+    name: "ListProjects",
+    path: "/projects",
+    component: () => import("@/views/ListProjects.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    name: "CreateProject",
+    path: "/projects/create",
+    component: () => import("@/views/CreateProject.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    name: "ViewProject",
+    path: "/projects/:projectId",
+    component: () => import("@/views/ViewProject.vue"),
+    meta: { requiresAuth: true },
+  },
 ];
 
 /* eslint-disable no-unused-vars */
