@@ -28,6 +28,7 @@ users:
     shell: /bin/bash
     ssh-authorized-keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDy3/INt09qozO/PFOo0CiHgNYIbs2kQqvIZsA8iNC1b jan
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKVI//V/VE0RFdiVyVO0fU5n17sDLks5seNAXxOaf6qx engage-dev-konrad
 
 runcmd:
   - systemctl daemon-reload
