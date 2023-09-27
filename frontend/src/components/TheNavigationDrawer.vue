@@ -33,6 +33,7 @@
     <v-divider></v-divider>
     <v-list density="compact" nav>
       <v-list-item
+        :to="{ name: 'ListProjects' }"
         prepend-icon="mdi-view-dashboard-variant"
         title="Projects"
       ></v-list-item>
