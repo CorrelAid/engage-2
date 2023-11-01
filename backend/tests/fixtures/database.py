@@ -37,6 +37,7 @@ def admin_details():
         "email": "test@gmail.com",
         "password": "1234",
         "is_superuser": True,
+        "roles": [],
     }
 
 

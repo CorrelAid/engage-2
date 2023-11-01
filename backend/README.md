@@ -25,32 +25,51 @@ For storage the backend assumes a connection to a Postgres instance.
     When run for the first time this should configure and run all hooks. The
     checks from the hooks should pass for a freshly cloned repository.
 
-## Run the backend
+## Run the backend locally
+
+There are two main ways to run the backend locally. Inside docker and outside of docker.
+Running the backend inside of docker is closer to dev and production, but has the disadvantage of
+additional build time. This is recommended for situations when one does not directly work
+on the backend itself. For instance when one works on the frontend. A local deployment outside
+of docker is most helpful when one works on the backend itself and wants hot reloads.
+
+### Run the backend inside docker
+
+In project root run
+
+    make up
+    make alembic-upgrade
+    make adduser
+
+### Run the backend outside docker
 
 To run the backend you need to have a postgres instance running. The easiest
-way to get one is to use docker.
+way to get one is to use out pre-configured docker-compose file in the project root.
+This can be used by going to the project root and running.
 
-    docker run --name engage-postgres -e POSTGRES_PASSWORD=engage -p 5432:5432 -d postgres
+    make start-test-db
 
-This will start a postgres instance with the password `engage` and expose the
-default port `5432` on the host. The database will be empty and we'll need to run the migrations to create the tables.
+This will start a postgres instance with user `engage` the password `pass` and expose the
+default port `5432` on the host.
 
-    TBD
+The default .env file will be sufficient to start a local backend and does not need to be edited.
+That being said, the database host will however be dynamically overwritten by make commands
+to account for fact that the backend does not run in a docker network.
 
-Before running the backend you need to set the environment variables. The following variables are required:
+Before we start the backend we have to deal with the empty database and we'll need to
+run the migrations to create the tables. To do this we'll go to the project root folder and run
 
-    CSRF_SECRET=...
-    POSTGRES_USER=postgres
-    POSTGRES_PASSWORD=engage
-    POSTGRES_DB=postgres
+    make run-local-db-upgrade
 
-The `CSRF_SECRET` is used to sign the CSRF token. It can be any string. The
-`POSTGRES_USER` and `POSTGRES_PASSWORD` are the credentials for the postgres
-instance. The `POSTGRES_DB` is the name of the database to use.
+Usually we also need a user for API operations. To create a test user we can run
 
-To run the backend use
+    make create-local-test-user
 
-    poetry run python src/main.py
+This creates a user `testuser@example.com` with the password `testpassword123`.
+
+Finally to run the backend use
+
+    make start-local-backend
 
 ## Testing
 

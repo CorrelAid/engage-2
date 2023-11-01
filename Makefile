@@ -27,7 +27,7 @@ test-backend:
 
 .PHONY: test-backend-w-db
 test-backend-w-db:
-	cd backend && ENGAGE_BACKEND_TESTS__TEST_DATABASE=true poetry run pytest -v
+	cd backend && ENGAGE_BACKEND_TESTS__TEST_DATABASE=true ENGAGE_BACKEND_DATABASE__HOST=localhost poetry run pytest -v
 
 .PHONY: start-test-db
 start-test-db:
@@ -92,3 +92,15 @@ stop-engage-dev-frontend-backend:
 	docker stop engage-api || echo "Stopping engage-api failed."
 	docker stop engage-client || echo "Stopping engage-client failed."
 	docker network rm engage-network || echo "Removing engage-network docker network failed."
+
+.PHONY: run-local-db-upgrade
+run-local-db-upgrade:
+	cd backend/src && ENGAGE_BACKEND_DATABASE__HOST=localhost poetry run alembic upgrade head
+
+.PHONY: create-local-test-user
+create-local-test-user:
+	cd backend && ENGAGE_BACKEND_DATABASE__HOST=localhost poetry run python src/cli.py adduser
+
+.PHONY: start-local-backend
+start-local-backend:
+	cd backend && ENGAGE_BACKEND_DATABASE__HOST=localhost poetry run python src/main.py
