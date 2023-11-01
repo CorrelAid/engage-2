@@ -54,7 +54,7 @@ async def test_authenticated_route(async_client, admin_details):
         )
         assert login_response.status_code == 204
         response = await ac.get(
-            "/authenticated-route",
+            "/auth/me",
             headers={"Cookie": login_response.headers["Set-Cookie"]},
         )
         assert response.status_code == 200
