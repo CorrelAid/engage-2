@@ -1,4 +1,4 @@
-from api.routers import auth, organizations, projects
+from api.routers import auth, comments, organizations, projects
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
@@ -24,3 +24,4 @@ app.include_router(
     router=organizations.router, prefix="/organizations", tags=["organizations"]
 )
 app.include_router(router=projects.router, prefix="/projects", tags=["projects"])
+app.include_router(router=comments.router, prefix="/comments", tags=["comments"])

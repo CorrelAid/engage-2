@@ -1,16 +1,4 @@
-from .base import database_test
-
-
-async def get_auth_cookie_header(connected_async_client, admin_details):
-    login_response = await connected_async_client.post(
-        "/auth/login",
-        data={
-            "username": admin_details["email"],
-            "password": admin_details["password"],
-        },
-    )
-    assert login_response.status_code == 204
-    return {"Cookie": login_response.headers["Set-Cookie"]}
+from .base import database_test, get_auth_cookie_header
 
 
 @database_test

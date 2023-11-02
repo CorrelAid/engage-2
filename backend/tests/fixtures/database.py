@@ -1,5 +1,6 @@
 import contextlib
 import uuid
+from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -8,10 +9,11 @@ from alembic.config import Config
 from api.auth.users import get_user_manager
 from api.routers.auth import UserCreate
 from database.session import get_async_session, get_user_service
+from models.comment import Comment
 from models.project import Project
 from models.user import User
 from settings import settings
-from sqlalchemy import delete
+from sqlalchemy import delete, text
 
 get_async_session_context = contextlib.asynccontextmanager(get_async_session)
 get_user_service_context = contextlib.asynccontextmanager(get_user_service)
@@ -89,5 +91,48 @@ async def example_project(project_details, alembic_upgrade):
             await session.commit()
 
             yield
+    else:
+        yield
+
+
+@pytest.fixture(scope="session")
+async def comment_details():
+    return {
+        "text": "This is a test comment!",
+        "updated_at": datetime.utcnow(),
+        "created_at": datetime.utcnow(),
+    }
+
+
+@pytest.fixture(scope="session", autouse=True)
+async def example_comment(comment_details, alembic_upgrade):
+    if settings.tests.test_database:
+        async with get_async_session_context() as session:
+            delete_stmt = delete(Comment).where(
+                Comment.text == comment_details.get("text")
+            )
+            await session.execute(delete_stmt)
+            await session.commit()
+
+            # model based statment has issues with postgres system user table.
+            # As a result we use a text query where we can quote the table.
+            user = (await session.execute(text('select * from "user";'))).fetchone()
+
+            comment = Comment(
+                **comment_details,
+                created_by=user.id,
+                updated_by=user.id,
+                id=uuid.uuid4(),
+            )
+            session.add(comment)
+            await session.commit()
+
+            yield
+
+            delete_stmt = delete(Comment).where(
+                Comment.text == comment_details.get("text")
+            )
+            await session.execute(delete_stmt)
+            await session.commit()
     else:
         yield
